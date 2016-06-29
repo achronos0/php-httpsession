@@ -150,15 +150,13 @@ class HttpSession
 	*				(mixed) post data sent in original request
 	*	@return
 	*		string
-	*			response content
-	*		Normally:
-	*			(string) response content;
-	*			note this may be an empty string, if request was successful but no content was
-	*			returned
-	*		If request fails and option 'ignore_failure' is not set:
-	*			false
-	*			note that http failures are not reported as a class error, but are available using
-	*			httpError()
+	*			Response content.
+	*		false
+	*			If HTTP request fails, and 'ignore_failure' parameter is not set.
+	*			Call httpError() for description of problem.
+	*			Inspect $aResults for details about problem.
+	*		true
+	*			If 'download' parameter is set.
 	*	@throws Exception
 	*		Throws Exception on misconfiguration.
 	*		Note does NOT throw an exception on HTTP failure.
@@ -469,6 +467,7 @@ class HttpSession
 			$bTestContent = (
 				$sHttpMethod != 'HEAD'
 				&& !in_array($aCurlResult['http_code'], array( 204, 205, 304 ))
+				&& !$aParams['download']
 			);
 		}
 
@@ -512,7 +511,7 @@ class HttpSession
 				$sError = 'content is invalid (does not match success test)';
 			}
 		}
-		if ($bSuccess && $aParams['response_parse_failure']) {
+		if ($bTestContent && $bSuccess && $aParams['response_parse_failure']) {
 			if (preg_match('/^([\/#@]).+\\1\w{0,2}$/', $aParams['response_parse_failure'])) {
 				if (preg_match($aParams['response_parse_failure'], $sResponseContent)) {
 					$bSuccess = false;
@@ -579,8 +578,11 @@ class HttpSession
 		}
 
 		// Return response content
-		if ($bSuccess || $aParams['ignore_failure'])
+		if ($bSuccess || $aParams['ignore_failure']) {
+			if ($aParams['download'])
+				return true;
 			return $sResponseContent;
+		}
 
 		// Return error
 		return false;
