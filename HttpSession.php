@@ -395,7 +395,7 @@ class HttpSession
 			}
 			elseif (is_callable($aParams['download'])) {
 				$this->xDownloadCallback = $aParams['download'];
-				$aOptions[CURLOPT_WRITEFUNCTION] = array( $this, '_curlWrite' )
+				$aOptions[CURLOPT_WRITEFUNCTION] = array( $this, '_curlWrite' );
 			}
 			else {
 				$aOptions[CURLOPT_FILE] = fopen($sFilePath, 'wb');
@@ -635,11 +635,11 @@ class HttpSession
 	//////////////////////////////
 	// Internal static
 
-	private static $aAutoValidateTests = array(
+	protected static $aAutoValidateTests = array(
 		array( '__VIEWSTATE', '/name="__VIEWSTATE"[^>]+value="(.+?)"/' ),
 		array( '__EVENTVALIDATION', '/name="__EVENTVALIDATION"[^>]+value="(.+?)"/' )
 	);
-	private static $aDefaultParams = array(
+	protected static $aDefaultParams = array(
 		'ssl' => false,
 		'ssl_ignore_cert' => false,
 		'ssl_ca_file' => null,
@@ -674,7 +674,7 @@ class HttpSession
 	);
 
 	// Normalize call data parameters
-	private static function prepParams($aNew, $aFinal)
+	protected static function prepParams($aNew, $aFinal)
 	{
 		if ($aNew) {
 			foreach ($aNew as $sName => $mValue) {
@@ -814,7 +814,7 @@ class HttpSession
 	}
 
 	// Convert data array to query string
-	private static function queryToString($mValue, $aExtraData)
+	protected static function queryToString($mValue, $aExtraData)
 	{
 		$aQueryData = self::queryToArray($mValue, $aExtraData);
 		$aTemp = array();
@@ -830,7 +830,7 @@ class HttpSession
 	}
 
 	// Convert query string to data array
-	private static function queryToArray($mValue, $aExtraData)
+	protected static function queryToArray($mValue, $aExtraData)
 	{
 		$aQueryData = array();
 		if (is_array($mValue))
