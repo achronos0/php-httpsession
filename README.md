@@ -291,7 +291,14 @@ Function to call to finalize templating data in parameters, prior to issuing eac
 
 Callback signature:
 
-	function (string $sOriginalContent, HttpSession $oHttp): string
+	function (string $sOriginalContent, bool $bUrlEncode, HttpSession $oHttp): string
+
+#### `logger_callback`
+Function to call after completing each call.
+
+Callback signature:
+
+	function (string $sMessage, array $aResults, HttpSession $oHttp): void
 
 #### `ignore_failure`
 `true` to return response content even if there was an error.  
