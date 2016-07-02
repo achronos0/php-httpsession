@@ -68,14 +68,19 @@ class HttpSession
 	*	finalized request body content (POST data), set default MIME type, add custom headers, etc.
 	*
 	*	Handler function signature:
-	*
-	*		function ()
+	*		function ($aParams, $oHttp): array
 	*
 	*	Arguments:
+	*		$aParams
 	*
-	*		f
-	*
-	*	Return: void
+	*	Return: array
+	*		post_mode
+	*			string on of the following: get form data file
+	*		post_data
+	*			mixed finalized request body, formatted per post_mode
+	*			See documentation.
+	*		params
+	*			array call parameters to change.
 	*
 	*	@param $aCallTypes array new call types to register, each is:
 	*		(string) type => array:
@@ -89,6 +94,11 @@ class HttpSession
 		return true;
 	}
 
+	/**
+	*	Return all registered call types
+	*
+	*	@return array call type names and definitions
+	*/
 	public static function getRegisteredCallTypes()
 	{
 		return self::$aCallTypes;
@@ -184,7 +194,7 @@ class HttpSession
 	*/
 	public function &getDataRef()
 	{
-		return &$this->aParams['data'];
+		return $this->aParams['data'];
 	}
 
 	/**
@@ -272,7 +282,7 @@ class HttpSession
 		if ($aParams['port'])
 			$aParams['url'] .= ':' . $aParams['port'];
 		$aParams['url'] .= $aParams['path'];
-		$sQuery = self::queryToString($aFinal['query'], $aParams['extra_query']);
+		$sQuery = self::queryToString($aParams['query'], $aParams['extra_query']);
 		if ($sQuery)
 			$aParams['url'] .= '?' . $sQuery;
 
@@ -499,7 +509,8 @@ class HttpSession
 			$aOptions[CURLOPT_HEADER] = true;
 			$aOptions[CURLOPT_RETURNTRANSFER] = true;
 		}
-		$aOptions[CURLOPT_HTTPHEADER] = $aParams['headers'];
+		if ($aParams['headers'])
+			$aOptions[CURLOPT_HTTPHEADER] = $aParams['headers'];
 
 		// Initialize cURL session for this object
 		if (!$this->rCurl) {
@@ -533,6 +544,8 @@ class HttpSession
 		}
 
 		// Configure dynamic cURL settings
+//echo '$aOptions=' . dump($aOptions);
+//die;
 		curl_setopt_array($this->rCurl, $aOptions);
 
 		// Execute HTTP request and get response content
@@ -753,7 +766,7 @@ class HttpSession
 		'charset' => null,
 		'referer' => null,
 		'agent' => null,
-		'headers' => null,
+		'headers' => array(),
 		'parser_callback' => null,
 		'logger_callback' => false,
 		'download' => false,
@@ -774,23 +787,47 @@ class HttpSession
 	);
 	protected static $aCallTypes = array(
 		'get' => array(
+			'description' => 'Fetch URL (no request body)',
+			'handler' => false,
 		),
 		'form' => array(
+			'description' => 'Standard form post',
+			'handler' => false,
 		),
 		'multipart' => array(
+			'description' => 'Multipart form post',
+			'handler' => false,
 		),
 		'xml' => array(
+			'description' => 'Send XML',
+			'handler' => false,
 		),
 		'json' => array(
+			'description' => 'Send JSON',
+			'handler' => false,
 		),
 		'binary' => array(
+			'description' => 'Send other data',
+			'handler' => false,
+		),
+		'file' => array(
+			'description' => 'Send file contents',
+			'handler' => false,
 		),
 		'multipart_complex' => array(
+			'description' => 'Complex multipart post',
+			'handler' => false,
 		),
 	);
 
-	// Normalize call data parameters
-	protected static function prepParams($aNew, $aFinal)
+	/**
+	*	Normalize call data parameters
+	*
+	*	Internal use only, do not call directly.
+	*
+	*	@internal
+	*/
+	public static function prepParams($aNew, $aFinal)
 	{
 		if ($aNew) {
 			foreach ($aNew as $sName => $mValue) {
@@ -917,20 +954,13 @@ class HttpSession
 	}
 
 	/**
+	*	Convert data array to query string
+	*
 	*	Internal use only, do not call directly.
-	*	Handle cURL requests to read data while uploading file
 	*
 	*	@internal
 	*/
-	public static function _curlRead($rCurl, $rFile, $iMaxBytes)
-	{
-		if (feof($rFile))
-			return '';
-		return fread($rFile, $iMaxBytes);
-	}
-
-	// Convert data array to query string
-	protected static function queryToString($mValue, $aExtraData)
+	public static function queryToString($mValue, $aExtraData)
 	{
 		$aQueryData = self::queryToArray($mValue, $aExtraData);
 		$aTemp = array();
@@ -945,8 +975,14 @@ class HttpSession
 		return $aTemp ? str_replace('%23', '#', implode('&', $aTemp)) : null;
 	}
 
-	// Convert query string to data array
-	protected static function queryToArray($mValue, $aExtraData)
+	/**
+	*	Convert query string to data array
+	*
+	*	Internal use only, do not call directly.
+	*
+	*	@internal
+	*/
+	public static function queryToArray($mValue, $aExtraData)
 	{
 		$aQueryData = array();
 		if (is_array($mValue))
@@ -993,6 +1029,20 @@ class HttpSession
 			}
 		}
 		return $aQueryData;
+	}
+
+	/**
+	*	Handle cURL requests to read data while uploading file
+	*
+	*	Internal use only, do not call directly.
+	*
+	*	@internal
+	*/
+	public static function _curlRead($rCurl, $rFile, $iMaxBytes)
+	{
+		if (feof($rFile))
+			return '';
+		return fread($rFile, $iMaxBytes);
 	}
 
 
