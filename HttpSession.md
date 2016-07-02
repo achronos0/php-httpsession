@@ -361,12 +361,6 @@ If response content contains text/matches regex, the call is treated as failed.
 
 This parameter is ignored if no response body is expected according to the HTTP standard.
 
-#### `extra_post`
-Array of additional form field names and values to add to POST data.
-
-This can be used to specify some "global" values that must be passed with every request (e.g. a
-session identifier or validation token).
-
 #### `track_cookies`
 `true` to mimic browser cookie handling (remember cookies set by remote server and automatically
 return them in future requests).  
@@ -409,6 +403,23 @@ Default is 3.
 
 #### `http_method`
 Custom HTTP request method to use instead of `"GET"` or `"POST"`; e.g. `"PUT"`, `"DELETE"`, `"HEAD"`.
+
+#### `extra_query`
+Array of additional URL (query) parameter names and values to add to URL.
+
+This can be used to specify some "global" values that must be passed with every request (e.g. a
+session identifier or validation token).
+
+#### `extra_post`
+Array of additional form field names and values to add to POST data.
+
+This can be used to specify some "global" values that must be passed with every request (e.g. a
+session identifier or validation token).
+
+#### `data`
+Additional data to store with session.
+
+This additional data is not used by HttpSession, but can be used by attached custom routines (e.g. parser_callback, logger_callback).
 
 # Request types #
 
@@ -559,6 +570,70 @@ Supported post data formats:
 *	associative array
 
 	As for vector array except `name` defaults to the array element's key.
+
+## Custom call types ##
+
+In addition to the built-in types described above, custom call types are possible.
+
+To define a new call type (or override handling of a built-in type), call registerCallTypes().
+
+Each type has a name, which is the value of the `type` call param, and an array of definition data.
+For the moment the definition only has one defined element:
+
+*	`handler`
+
+	callback
+	
+	Function to call to generate finalized request body (POST data), set MIME, apply custom headers, etc.
+	
+
+Handler function signature:
+
+	function (array $aParams, HttpSession $oHttp): array
+	
+Parameters:
+
+*	`$aParams`
+
+	Finalized call parameters to be used for this request.
+
+*	`$oHttp`
+
+	HttpSession object on which call is made.
+
+Returns: `array` finalized POST, and other settings; format:
+
+*	`post_mode`
+
+	One of the following:
+	
+	`get`: No request body.  
+	HTTP method defaults to `GET`.  
+
+	`form`: Standard form post.  
+	HTTP method defaults to `POST`.  
+	This is php `CURLOPT_POST=true`, post data is `CURLOPT_POSTFIELDS`:  
+	If post data is a string, it is assumed to be a URL-encoded query string, and content type defaults to `application/x-www-form-urlencoded`.  
+	If post data is an array, it is assumed to be a map of non-URL-encoded query parameter names and string values, and content type defaults to `multipart/form-data`.
+	
+	`data`: Raw data.  
+	HTTP method defaults to `POST`.  
+	Post data must be a string of binary data, which will be used as the request body.  
+	There is no default content type, MIME must be explicitly provided by type handler.
+	
+	`file`: File data.  
+	HTTP method defaults to `POST`'.  
+	Post data must be a valid file path. File contents will be used as the request body.
+	
+*	`post_data`
+
+	Finalized request body, formatted according to `post_mode`.
+
+*	`params`
+
+	Array of call parameters to override.
+	
+	Common call parameters set by type handler are `mime`, `charset`, `headers`, 
 
 ## Examples ##
 Create a new HTTP session:
