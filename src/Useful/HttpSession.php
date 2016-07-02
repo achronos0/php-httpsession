@@ -58,6 +58,42 @@ class HttpSession
 		return self::$aDefaultParams;
 	}
 
+	/**
+	*	Add custom call types
+	*
+	*	In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it
+	*	is possible to define custom types.
+	*
+	*	Each type has a handler function that runs when the type is used. The handler must generate
+	*	finalized request body content (POST data), set default MIME type, add custom headers, etc.
+	*
+	*	Handler function signature:
+	*
+	*		function ()
+	*
+	*	Arguments:
+	*
+	*		f
+	*
+	*	Return: void
+	*
+	*	@param $aCallTypes array new call types to register, each is:
+	*		(string) type => array:
+	*			handler
+	*				callback function to generate post data, set MIME type, etc.
+	*	@return bool true
+	*/
+	public static function registerCallTypes($aCallTypes)
+	{
+		self::$aCallTypes = array_merge(self::$aCallTypes, $aCallTypes);
+		return true;
+	}
+
+	public static function getRegisteredCallTypes()
+	{
+		return self::$aCallTypes;
+	}
+
 
 	//////////////////////////////
 	// Public
@@ -103,6 +139,52 @@ class HttpSession
 	public function getParams()
 	{
 		return $this->aParams;
+	}
+
+	/**
+	*	Store additional data with session
+	*
+	*	This additional data is not used by HttpSession but can be used by attached custom
+	*	routines (e.g. parser_callback, logger_callback).
+	*
+	*	@param $aData array session additional data
+	*	@param $bClear bool true to remove existing data, false to merge old and new data
+	*	@return bool true
+	*/
+	public function setData($aData, $bClear = false)
+	{
+		$this->aParams['data'] =
+			$bClear
+			? $aData
+			: array_merge($this->aParams['data'], $aData)
+		;
+		return true;
+	}
+
+	/**
+	*	Get session additional data
+	*
+	*	This additional data is not used by HttpSession but can be used by attached custom
+	*	routines (e.g. parser_callback, logger_callback).
+	*
+	*	@return array session additional data
+	*/
+	public function getData()
+	{
+		return $this->aParams['data'];
+	}
+
+	/**
+	*	Get reference to session additional data
+	*
+	*	This additional data is not used by HttpSession but can be used by attached custom
+	*	routines (e.g. parser_callback, logger_callback).
+	*
+	*	@return array-ref session additional data
+	*/
+	public function &getDataRef()
+	{
+		return &$this->aParams['data'];
 	}
 
 	/**
@@ -177,24 +259,36 @@ class HttpSession
 				'Call misconfigured: missing path (host: ' . $aParams['host'] . ')'
 			);
 		}
+		if (!isset(self::$aCallTypes[$aParams['type']]))
+			throw new Exception('Call misconfigured: invalid type "' . $aParams['type'] . '"');
 
-		// Assemble request settings
-		$sUrl = ($aParams['ssl'] ? 'https://' : 'http://') . $aParams['host'];
-		if ($aParams['port'])
-			$sUrl .= ':' . $aParams['port'];
-		$sUrl .= $aParams['path'];
-		if ($aParams['query'])
-			$sUrl .= '?' . $aParams['query'];
-		$sMime = $aParams['mime'];
-		$sCharset = $aParams['charset'];
-		$aHeaders = $aParams['headers'] ?: array();
+		// Get custom routines
+		$xTypeHandler = self::$aCallTypes[$aParams['type']]['handler'];
 		$xParser = $aParams['parser_callback'];
 		$xLogger = $aParams['logger_callback'];
+
+		// Assemble URL
+		$aParams['url'] = ($aParams['ssl'] ? 'https://' : 'http://') . $aParams['host'];
+		if ($aParams['port'])
+			$aParams['url'] .= ':' . $aParams['port'];
+		$aParams['url'] .= $aParams['path'];
+		$sQuery = self::queryToString($aFinal['query'], $aParams['extra_query']);
+		if ($sQuery)
+			$aParams['url'] .= '?' . $sQuery;
 
 		// Handle post data
 		$sPostMode = 'get';
 		$mPostData = null;
-		if ($aParams['post']) {
+		if ($xTypeHandler) {
+			$aData = $xTypeHandler($aParams, $this);
+			if (!empty($aData['post_mode']))
+				$sPostMode = $aData['post_mode'];
+			if (isset($aData['post_data']))
+				$mPostData = $aData['post_data'];
+			if (!empty($aData['params']))
+				$aParams = array_merge($aParams, $aData['params']);
+		}
+		elseif ($aParams['post']) {
 			switch ($aParams['type']) {
 				case 'form':
 					$sPostMode = 'form';
@@ -206,8 +300,8 @@ class HttpSession
 					break;
 				case 'xml':
 					$sPostMode = 'data';
-					if (!$sMime)
-						$sMime = 'application/xml';
+					if (!$aParams['mime'])
+						$aParams['mime'] = 'application/xml';
 					if ($aParams['post'] instanceof DomDocument)
 						$mPostData = $aParams['post']->saveXML();
 					elseif ($aParams['post'] instanceof DomNode)
@@ -215,20 +309,20 @@ class HttpSession
 					else
 						$mPostData = strval($aParams['post']);
 					if (
-						!$sCharset
+						!$aParams['charset']
 						&& preg_match(
 							'/<?xml[^>]*\nencoding\s*=\s*[\'"](\w+)/s',
 							$mPostData,
 							$aMatches
 						)
 					) {
-						$sCharset = strtoupper($aMatches[1]);
+						$aParams['charset'] = strtoupper($aMatches[1]);
 					}
 					break;
 				case 'json':
 					$sPostMode = 'data';
-					if (!$sMime)
-						$sMime = 'application/json';
+					if (!$aParams['mime'])
+						$aParams['mime'] = 'application/json';
 					if (is_array($aParams['post']))
 						$mPortData = json_encode($aParams['post']);
 					else
@@ -244,13 +338,13 @@ class HttpSession
 					break;
 				case 'multipart_complex':
 					$sPostMode = 'data';
-					if (!$sMime)
-						$sMime = 'multipart/form-data';
-					if (preg_match('/;\s*boundary\s*=\s*=?([^\s"]+)/s', $sMime, $aMatches))
+					if (!$aParams['mime'])
+						$aParams['mime'] = 'multipart/form-data';
+					if (preg_match('/;\s*boundary\s*=\s*=?([^\s"]+)/s', $aParams['mime'], $aMatches))
 						$sBoundary = $aMatches[1];
 					else {
 						$sBoundary = md5(rand() . microtime());
-						$sMime .= '; boundary="' . $sBoundary . '"';
+						$aParams['mime'] .= '; boundary="' . $sBoundary . '"';
 					}
 					$mPostData = '';
 					$sEol = chr(13) . chr(10);
@@ -308,24 +402,23 @@ class HttpSession
 		}
 
 		// Handle MIME type and charset
-		if ($sMime) {
-			foreach ($aHeaders as $sVal) {
+		if ($aParams['mime']) {
+			foreach ($aParams['headers'] as $sVal) {
 				if (preg_match('/^content-type\s*:/i', $sVal)) {
-					$sMime = null;
+					$aParams['mime'] = null;
 					break;
 				}
 			}
-			if ($sMime) {
-				if ($sCharset) {
-					$sMime .= '; charset=' . $sCharset;
-				}
-				$aHeaders[] = 'Content-Type: ' . $sMime;
+			if ($aParams['mime']) {
+				if ($aParams['charset'])
+					$aParams['mime'] .= '; charset=' . $aParams['charset'];
+				$aParams['headers'][] = 'Content-Type: ' . $aParams['mime'];
 			}
 		}
 
 		// Assemble per-request cURL settings
 		if ($xParser)
-			$sUrl = $xParser($sUrl, true, $this);
+			$aParams['url'] = $xParser($aParams['url'], true, $this);
 		$aOptions = array(
 			// bool
 			CURLOPT_FOLLOWLOCATION => $aParams['max_redirects'] ? true : false,
@@ -336,7 +429,7 @@ class HttpSession
 			CURLOPT_SSL_VERIFYHOST => $aParams['ssl_ignore_cert'] ? 0 : 2,
 			CURLOPT_TIMEOUT => $aParams['timeout'],
 			// string
-			CURLOPT_URL => $sUrl,
+			CURLOPT_URL => $aParams['url'],
 			CURLOPT_USERAGENT => $aParams['agent']
 		);
 		if ($aParams['ssl_ca_file'])
@@ -347,7 +440,7 @@ class HttpSession
 			$aOptions[CURLOPT_USERPWD] = $aParams['auth'];
 		if ($aParams['close_connection']) {
 			$aOptions[CURLOPT_FORBID_REUSE] = true;
-			$aHeaders[] = 'Connection: close';
+			$aParams['headers'][] = 'Connection: close';
 		}
 		else
 			$aOptions[CURLOPT_FORBID_REUSE] = false;
@@ -399,14 +492,14 @@ class HttpSession
 				$aOptions[CURLOPT_WRITEFUNCTION] = array( $this, '_curlWrite' );
 			}
 			else {
-				$aOptions[CURLOPT_FILE] = fopen($sFilePath, 'wb');
+				$aOptions[CURLOPT_FILE] = fopen($aParams['download'], 'wb');
 			}
 		}
 		else {
 			$aOptions[CURLOPT_HEADER] = true;
 			$aOptions[CURLOPT_RETURNTRANSFER] = true;
 		}
-		$aOptions[CURLOPT_HTTPHEADER] = $aHeaders;
+		$aOptions[CURLOPT_HTTPHEADER] = $aParams['headers'];
 
 		// Initialize cURL session for this object
 		if (!$this->rCurl) {
@@ -548,7 +641,7 @@ class HttpSession
 			'headers' => $sResponseHeaders,
 			'content_type' => $aCurlResult['content_type'],
 			'time' => $aCurlResult['total_time'],
-			'original_url' => $sUrl,
+			'original_url' => $aParams['url'],
 			'final_url' => $aCurlResult['url'],
 			'redirect_count' => $aCurlResult['redirect_count'],
 			'http_method' => $sHttpMethod,
@@ -662,20 +755,38 @@ class HttpSession
 		'agent' => null,
 		'headers' => null,
 		'parser_callback' => null,
+		'logger_callback' => false,
 		'download' => false,
 		'ignore_failure' => null,
 		'response_min_length' => 1,
 		'response_parse_success' => null,
 		'response_parse_failure' => null,
-		'logger_callback' => false,
-		'extra_post' => array(),
 		'track_cookies' => true,
 		'auto_validate' => false,
 		'timeout' => 100,
 		'connect_timeout' => 10,
 		'close_connection' => false,
 		'max_redirects' => 3,
-		'http_method' => null
+		'http_method' => null,
+		'extra_query' => array(),
+		'extra_post' => array(),
+		'data' => array(),
+	);
+	protected static $aCallTypes = array(
+		'get' => array(
+		),
+		'form' => array(
+		),
+		'multipart' => array(
+		),
+		'xml' => array(
+		),
+		'json' => array(
+		),
+		'binary' => array(
+		),
+		'multipart_complex' => array(
+		),
 	);
 
 	// Normalize call data parameters
@@ -715,14 +826,18 @@ class HttpSession
 						$aFinal[$sName] = intval($mValue);
 						break;
 					// array
+					case 'extra_query':
 					case 'extra_post':
+					case 'data':
 						$aFinal[$sName] = is_array($mValue) ? $mValue : array();
 						break;
 					// callback
 					case 'parser_callback':
+					case 'logger_callback':
 						$aFinal[$sName] = ($mValue && is_callable($mValue)) ? $mValue : null;
 						break;
 					// mixed
+					case 'query':
 					case 'post':
 					case 'download':
 						$aFinal[$sName] = $mValue;
@@ -752,10 +867,6 @@ class HttpSession
 						$aFinal['path'] = strval($mValue);
 						if (substr($aFinal['path'], 0, 1) != '/')
 							$aFinal['path'] = '/' . $aFinal['path'];
-						break;
-					case 'query':
-						$aFinal['query'] = self::queryToString($mValue, array());
-						break;
 						break;
 					case 'type':
 						$mValue = strtolower($mValue);
@@ -831,7 +942,7 @@ class HttpSession
 			else
 				$aTemp[] = rawurlencode($sName) . '=' . rawurlencode($mVal);
 		}
-		return str_replace('%23', '#', implode('&', $aTemp));
+		return $aTemp ? str_replace('%23', '#', implode('&', $aTemp)) : null;
 	}
 
 	// Convert query string to data array
