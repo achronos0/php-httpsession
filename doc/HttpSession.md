@@ -1,5 +1,8 @@
+# HttpSession #
+
+This class is a cUrl wrapper, designed to make managing HTTP(S) requests more convenient.
+
 ## Overview ##
-This library is a cUrl wrapper, designed to make managing HTTP(S) requests more convenient.
 
 Quick example:
 

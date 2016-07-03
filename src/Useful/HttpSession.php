@@ -3,8 +3,7 @@
 * Manage an HTTP session
 *
 * @link https://github.com/achronos0/useful
-* @author Ky Patterson
-* @copyright Ky Patterson 2016
+* @copyright Ky Patterson 2016, licensed under Apache 2.0
 */
 
 namespace Useful;
@@ -52,10 +51,10 @@ class HttpSession
 	* Add custom call types
 	*
 	* In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it
-	* is possible to define custom types.
+	*  is possible to define custom types.
 	*
 	* Each type has a name, which is the value used in the 'type' call parameter, and an array of
-	* definition data.
+	*  definition data.
 	*
 	* At the moment only one definition element is defined:
 	*   handler
@@ -78,12 +77,11 @@ class HttpSession
 	*     array call parameters to change.
 	*
 	* @param array $aCallTypes new call types to register
-	* @return bool true
+	* @return void
 	*/
 	public static function registerCallTypes($aCallTypes)
 	{
 		self::$aCallTypes = array_merge(self::$aCallTypes, $aCallTypes);
-		return true;
 	}
 
 	/**
@@ -148,7 +146,7 @@ class HttpSession
 	* Store additional data with session
 	*
 	* This additional data is not used by HttpSession but can be used by attached custom
-	* routines (e.g. parser_callback, logger_callback).
+	*  routines (e.g. parser_callback, logger_callback).
 	*
 	* @param array $aData session additional data
 	* @param bool  $bClear true to remove existing data, false to merge old and new data
@@ -168,7 +166,7 @@ class HttpSession
 	* Get session additional data
 	*
 	* This additional data is not used by HttpSession but can be used by attached custom
-	* routines (e.g. parser_callback, logger_callback).
+	*  routines (e.g. parser_callback, logger_callback).
 	*
 	* @return array session additional data
 	*/
@@ -181,7 +179,7 @@ class HttpSession
 	* Get reference to session additional data
 	*
 	* This additional data is not used by HttpSession but can be used by attached custom
-	* routines (e.g. parser_callback, logger_callback).
+	*  routines (e.g. parser_callback, logger_callback).
 	*
 	* @return array-ref session additional data
 	*/
@@ -194,7 +192,7 @@ class HttpSession
 	* Execute an HTTP request and return response content
 	*
 	* Call is executed based on call parameters passed in $aParams, using session defaults
-	* for parameters that are not specified.
+	*  for parameters that are not specified.
 	*
 	* Common call-time call parameters:
 	*   * url
@@ -205,17 +203,17 @@ class HttpSession
 	* See docs for a reference of all available call parameters.
 	*
 	* The function will return the response content as a string, unless the 'download' parameter
-	* is in use.
+	*  is in use.
 	*
 	* On a communication failure or HTTP error, the function will return false.
 	* Call httpError() to get a text description of the error.
 	*
 	* To always return response content, even when the server returns an error HTTP status code,
-	* use the 'ignore_failure' call parameter.
+	*  use the 'ignore_failure' call parameter.
 	*
 	* To gather detailed information about the disposition of the call (on success or failure),
-	* pass the $aResults param. The variable will be populated with data about the request and
-	* response:
+	*  pass the $aResults param.
+	* The variable will be populated with data about the request and response:
 	*   success
 	*     (bool) true on success, false on error
 	*   error
@@ -248,7 +246,7 @@ class HttpSession
 	*     (mixed) post data sent in original request
 	*
 	* @param array $aParams call-time call parameters
-	* @param array-ref &$aResults populated with data about the call
+	* @param array-ref &$aResults variable is populated with data about the call
 	* @return string response content; or false on failure; or true if 'download' parameter is set
 	* @throws Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
 	*/
@@ -697,18 +695,18 @@ class HttpSession
 	* Execute a series of HTTP requests.
 	*
 	* Each element in the call data array causes an HTTP request to be made, using the element
-	* value as an array of call parameters, exactly as per call().
+	*  value as an array of call parameters, exactly as per call().
 	* Requests are executed one at a time, in array order.
 	* The result data array is populated in the same order, and using the same key as the call
-	* data element.
+	*  data element.
 	*
 	* If a request fails (call() returns false) then the sequence is stopped, no further requests
-	* are made.
+	*  are made.
 	*
 	* @param array $aCallData sequence of calls to execute. Each element is an array of call-time
 	*  call parameters
-	* @param array-ref &$aResultData call results will be placed in this variable. Each element is
-	*  an array of call results, per $aResults param from call()
+	* @param array-ref &$aResultData variable is populated with call results. Each element is an
+	*  array of call results, per $aResults param from call()
 	* @return bool true on success (all calls succeeded), false on failure
 	*/
 	public function sequence($aCallData, &$aResultData = null)
@@ -727,7 +725,8 @@ class HttpSession
 	/**
 	* Return description of HTTP error from most recent call
 	*
-	* @return string http error description, or null if there was no error during the most recent call
+	* @return string http error description, or null if there was no error during the most recent
+	*  call
 	*/
 	public function httpError()
 	{
