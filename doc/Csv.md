@@ -53,41 +53,75 @@ In most cases, you can use one of the static methods to read/write CSV in one li
 
 		$sCsvContent = Csv::generate($aData);
 
-To read larger amounts of data, use a batch reader object:
+When handling large amounts of data, create a batch reader/writer object:
 
-	// Open file and prepare for reading
-	$oCsvReader = Csv::createBatchReader($sFilePath);
-	
-	// Read file in batches of 1000 records
-	while (($aData = $oCsvReader->readBatch(1000))) {
-		// Handle each record in this batch
-		foreach ($aData as $aRec) {
-			// ...
+*	`createReader`
+
+	Create batch reader to read from file in stages:
+
+		// Open file and prepare for reading
+		$oCsvReader = Csv::createReader($sFilePath);
+		
+		// Read file in batches of 1000 records
+		while (($aData = $oCsvReader->readBatch(1000))) {
+			// Handle each record in this batch
+			foreach ($aData as $aRec) {
+				// ...
+			}
 		}
-	}
 
-	// Get total records found
-	$iTotalRecords = $oCsvReader->getRecordIndex();
+		// Get total records found
+		$iTotalRecords = $oCsvReader->getRecordIndex();
 
-	// Close file
-	$oCsvReader->close();
+		// Close file
+		$oCsvReader->close();
 
-To write large amounts of data, use a batch writer object:
+*	`createWriter`
 
-	// Open file and prepare for writing
-	$oCsvWriter = CsvFile::createBatchWriter($sFilePath);
+	Create batch writer to write to file in stages:
 
-	// Do your thing
-	while (...) {
-		// Generate a record of data
-		$aRec = array ( ... );
+		// Open file and prepare for writing
+		$oCsvWriter = Csv::createWriter($sFilePath);
 
-		// Write record to file
-		$oCsvWriter->writeRecord($aRec);
-	}
+		// Do your thing
+		while (...) {
+			// Generate a record of data
+			$aRec = array ( ... );
 
-	// Close file when done
-	$oCsvWriter->close();
+			// Write record to file
+			$oCsvWriter->writeRecord($aRec);
+		}
+
+		// Close file when done
+		$oCsvWriter->close();
+
+*	`createStringReader`
+
+	As `createReader`, but use in-memory string as source instead of file contents.
+
+		// Prepare for reading from string
+		$oCsvReader = Csv::createStringReader($sCsvContent);
+
+*	`createStringWriter`
+
+	As `createWriter`, but store generated content in memory instead of writing to file.
+
+	Call `getContent()` when writing is complete to retrieve full delimited content.
+
+		// Prepare for writing to string
+		$oCsvWriter = Csv::createStringWriter();
+
+		// Write data in stages
+		while (...) {
+			$aRec = array( ... );
+			$oCsvWriter->writeRecord($aRec);
+		}
+
+		// Retrieve delimited content
+		$sCsvContent = $oCsvWriter->getContent();
+
+		// Free memory
+		$oCsvWriter->close();
 
 Pass options to control how data is read and written: adjust the file
 format, control field names, skip some records, etc.

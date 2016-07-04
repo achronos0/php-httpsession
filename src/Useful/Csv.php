@@ -5,6 +5,9 @@
 * @link https://github.com/achronos0/useful
 * @copyright Ky Patterson 2016, licensed under Apache 2.0
 */
+
+namespace Useful;
+
 class Csv
 {
 	//////////////////////////////
@@ -112,7 +115,7 @@ class Csv
 	* @return Csv batch reader object
 	* @throws Exception
 	*/
-	public static function createBatchReader($sFilePath, $aOptions = array())
+	public static function createReader($sFilePath, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
 		$oCsv->initReader(true, $sFilePath);
@@ -131,7 +134,7 @@ class Csv
 	* @return Csv string reader object
 	* @throws Exception
 	*/
-	public static function createStringBatchReader($sContent, $aOptions = array())
+	public static function createStringReader($sContent, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
 		$oCsv->initReader(false, $sContent);
@@ -158,7 +161,7 @@ class Csv
 	* @return Csv batch file writer object
 	* @throws Exception
 	*/
-	public static function createBatchWriter($sFilePath, $aOptions = array())
+	public static function createWriter($sFilePath, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
 		$oCsv->initWriter($sFilePath);
@@ -178,7 +181,7 @@ class Csv
 	* @return Csv batch string writer object
 	* @throws Exception
 	*/
-	public static function createStringBatchWriter($aOptions = array())
+	public static function createStringWriter($aOptions = array())
 	{
 		$oCsv = new self($aOptions);
 		$oCsv->initWriter($sFilePath);
@@ -1607,7 +1610,7 @@ class Csv
 					throw new Exception('Path is not writable');
 
 				// We only append if file actually has content
-				if (filesize($sFilePath)
+				if (filesize($sFilePath))
 					$bExists = true;
 			}
 			else {
