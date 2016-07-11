@@ -650,7 +650,10 @@ class HttpSession
 			'final_url' => $aCurlResult['url'],
 			'redirect_count' => $aCurlResult['redirect_count'],
 			'http_method' => $sHttpMethod,
-			'request_headers' => trim($aCurlResult['request_header']),
+			'request_headers' =>
+				isset($aCurlResult['request_header'])
+				? trim($aCurlResult['request_header'])
+				: null,
 		);
 		if ($sPostMode == 'form' && is_string($mPostData)) {
 			$aResults['post_data'] = self::queryToArray($mPostData, null);
