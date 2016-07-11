@@ -248,7 +248,7 @@ class HttpSession
 	* @param array $aParams call-time call parameters
 	* @param array-ref &$aResults variable is populated with data about the call
 	* @return string response content; or false on failure; or true if 'download' parameter is set
-	* @throws Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
+	* @throws \Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
 	*/
 	public function call($aParams, &$aResults = null)
 	{
@@ -257,14 +257,14 @@ class HttpSession
 
 		// Validate call data
 		if (empty($aParams['host']))
-			throw new Exception('Call misconfigured: missing host');
+			throw new \Exception('Call misconfigured: missing host');
 		if (empty($aParams['path'])) {
-			throw new Exception(
+			throw new \Exception(
 				'Call misconfigured: missing path (host: ' . $aParams['host'] . ')'
 			);
 		}
 		if (!isset(self::$aCallTypes[$aParams['type']]))
-			throw new Exception('Call misconfigured: invalid type "' . $aParams['type'] . '"');
+			throw new \Exception('Call misconfigured: invalid type "' . $aParams['type'] . '"');
 
 		// Get custom routines
 		$xTypeHandler = self::$aCallTypes[$aParams['type']]['handler'];
