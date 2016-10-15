@@ -24,7 +24,7 @@ class Date
 	*
 	* @param mixed $mDate date/time value in any acceptable format
 	* @return Date date/time object
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function obj($mDate)
 	{
@@ -48,7 +48,7 @@ class Date
 	*   \DateTimeZone
 	*     object of PHP builtin class DateTimeZone
 	* @return Date date/time object
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function createFromParts(
 		$iYear, $iMonth = 1, $iDay = 1, $iHour = 0, $iMinute = 0, $iSecond = 0, $mTimezone = null
@@ -72,7 +72,7 @@ class Date
 	*   can be a date format specifier string per php date() function;
 	*   or can be a format mnemonic name
 	* @return string formatted date/time value
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function valueFormat($mDate, $sFormat)
 	{
@@ -89,7 +89,7 @@ class Date
 	*   (int) -1 if date1 is earlier than date2
 	*   (int) 0 if date1 and date2 represent the same time
 	*   false if either date is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function valueCompare($mDateOne, $mDateTwo)
 	{
@@ -109,7 +109,7 @@ class Date
 	*   true if check date falls within date range
 	*   0 if check date falls outside of date range
 	*   false if any date is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function valueBetween($mCheckDate, $mStartDate, $mEndDate, $bInclusive = true)
 	{
@@ -128,7 +128,7 @@ class Date
 	* @return
 	*   (array) set of Date objects representing steps between start and end dates
 	*   false if either date is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public static function valueRange($mStartDate, $mEndDate, $sStepInterval = '+1 day')
 	{
@@ -227,7 +227,7 @@ class Date
 	*     timezone name
 	*   \DateTimeZone
 	*     object of php builtin class DateTimeZone
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function __construct($mDate = null, $sFormat = null, $mTimezone = null)
 	{
@@ -247,7 +247,7 @@ class Date
 	*
 	* @param string $sInterval time interval in format accepted by strtotime
 	* @return Date new date/time instance
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function relative($sInterval)
 	{
@@ -286,7 +286,7 @@ class Date
 	*   round
 	*     align to nearest boundary (earlier or later, whichever is closer)
 	* @return Date new date/time instance
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function align($sUnit, $iLength = 1, $sWhich = 'earlier')
 	{
@@ -307,7 +307,7 @@ class Date
 	*   \DateTimeZone
 	*     object of php builtin class DateTimeZone
 	* @return Date new date/time instance
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function relocate($mTimezone)
 	{
@@ -327,7 +327,7 @@ class Date
 	*   (int) -1 if this date is earlier than argument date
 	*   (int) 0 if this date and argument date represent the same time
 	*   false if either date is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function compare($mDate)
 	{
@@ -367,7 +367,7 @@ class Date
 	* @return bool
 	*   true if this date is on or before argument date
 	*   false if this date is after argument date
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function before($mDate, $bInclusive = true)
 	{
@@ -393,7 +393,7 @@ class Date
 	* @return bool
 	*   true if this date is on or after argument date
 	*   false if this date is before argument date
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function after($mDate, $bInclusive = true)
 	{
@@ -418,7 +418,7 @@ class Date
 	* @return bool
 	*   true if this date falls within date range
 	*   false if this date falls outside of date range
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function between($mStartDate, $mEndDate, $bInclusive = true)
 	{
@@ -546,7 +546,7 @@ class Date
 	*   all
 	* @return mixed interval in format specified by $sReturnMode
 	*   note return may be empty string or empty array if dates are equal
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function difference($mDate, $sReturnMode = 'relative')
 	{
@@ -856,7 +856,7 @@ class Date
 	* @return
 	*   (array) set of Date objects representing steps between start and end dates
 	*   false if either date is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function range($mEndDate, $sStepInterval = '+1 day')
 	{
@@ -1261,7 +1261,7 @@ class Date
 	* @param mixed $mDate date/time value in any acceptable format
 	* @param string $sFormat force string date value to be parsed using this format specifier
 	* @return bool true on success, false if date value is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function set($mDate, $sFormat = null)
 	{
@@ -1278,12 +1278,12 @@ class Date
 	* @param int $iMonth month part (1 to 12)
 	* @param int $iDay day of month part (1 to 31)
 	* @return bool true on success, false if arguments are invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function setDatePart($iYear, $iMonth = 1, $iDay = 1)
 	{
 		if (!$this->oTime->setDate($iYear, $iMonth, $iDay))
-			throw new Exception('setDatePart: invalid date arguments given');
+			throw new \Exception('setDatePart: invalid date arguments given');
 		return true;
 	}
 
@@ -1296,12 +1296,12 @@ class Date
 	* @param int $iMinute minute part (0 to 60)
 	* @param int $iSecond second part (0 to 60)
 	* @return bool true on success, false if arguments are invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function setTimePart($iHour = 0, $iMinute = 0, $iSecond = 0)
 	{
 		if (!$this->oTime->setTime($iHour, $iMinute, $iSecond))
-			throw new Exception('setTimePart: invalid time arguments given');
+			throw new \Exception('setTimePart: invalid time arguments given');
 		return true;
 	}
 
@@ -1323,7 +1323,7 @@ class Date
 	*   \DateTimeZone
 	*     object of php builtin class DateTimeZone
 	* @returns bool true on success, false if argument is invalid
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function changeTimezone($mTimezone)
 	{
@@ -1335,7 +1335,7 @@ class Date
 				$oTimeZone = new \DateTimeZone($mTimezone);
 			}
 			catch (Exception $e) {
-				throw new Exception(
+				throw new \Exception(
 					'setTimezone: invalid timezone argument given (' . $e->getMessage() . ')',
 					null,
 					$e
@@ -1345,7 +1345,7 @@ class Date
 
 		// Change timezone
 		if (!$this->oTime->setTimezone($oTimeZone))
-			throw new Exception('setTimezone: an unknown error occured while setting timezone');
+			throw new \Exception('setTimezone: an unknown error occured while setting timezone');
 		return true;
 	}
 
@@ -1354,12 +1354,12 @@ class Date
 	*
 	* @param string $sInterval time interval in format accepted by php strtotime()
 	* @return bool true
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function adjust($sInterval)
 	{
 		if (!$this->oTime->modify($sInterval))
-			throw new Exception('modify: invalid interval argument given');
+			throw new \Exception('modify: invalid interval argument given');
 		return true;
 	}
 
@@ -1391,7 +1391,7 @@ class Date
 	*   round
 	*     align to nearest boundary (earlier or later, whichever is closer)
 	* @return bool true
-	* @throws Exception
+	* @throws \Exception
 	*/
 	public function adjustAlign($sUnit, $iLength = 1, $sWhich = 'earlier')
 	{
@@ -1457,7 +1457,7 @@ class Date
 				;
 				break;
 			default:
-				throw new Exception('adjustAlign: invalid unit argument given');
+				throw new \Exception('adjustAlign: invalid unit argument given');
 		}
 
 		// Determine new boundary date-part value
@@ -1511,7 +1511,7 @@ class Date
 				$this->setDatePart($iBoundaryValue, 1, 1);
 				break;
 			default:
-				throw new Exception('adjustAlign: invalid unit argument given');
+				throw new \Exception('adjustAlign: invalid unit argument given');
 		}
 		return true;
 	}
@@ -1579,7 +1579,7 @@ class Date
 	{
 		// Empty: invalid
 		if (!$mValue)
-			throw new Exception('value is empty');
+			throw new \Exception('value is empty');
 
 		// Object: Date or DateTime instance
 		if (is_object($mValue)) {
@@ -1588,7 +1588,7 @@ class Date
 			elseif ($mValue instanceof \DateTime)
 				$mValue = $mValue->format(self::$sInternalFormat);
 			else
-				throw new Exception('value is object of unsupported class ' . get_class($mValue));
+				throw new \Exception('value is object of unsupported class ' . get_class($mValue));
 			$sFormat = self::$sInternalFormat;
 		}
 
@@ -1606,12 +1606,12 @@ class Date
 		elseif (is_string($mValue)) {
 			// Empty date, e.g. "0000-00-00" or "00/00/00"
 			if (preg_match('#^(?:0000|00[/\-]00)[/\-]#', $mValue))
-				throw new Exception('value is empty');
+				throw new \Exception('value is empty');
 		}
 
 		// Boolean, resource, etc.: invalid
 		else
-			throw new Exception('value is wrong type ' . gettype($mValue));
+			throw new \Exception('value is wrong type ' . gettype($mValue));
 
 		// Create new DateTime object using value and specific format
 		// [2012-06-11 kp] we use procedural calls to avoid throwing an exception for invalid dates
@@ -1624,7 +1624,7 @@ class Date
 			: date_create($mValue)
 		;
 		if (!$oTime)
-			throw new Exception('not a valid date');
+			throw new \Exception('not a valid date');
 
 		// Return DateTime object
 		return $oTime;
