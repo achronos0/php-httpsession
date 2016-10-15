@@ -1133,7 +1133,7 @@ class Csv
 	*/
 	const CRLF = "\x0D\x0A";
 
-	private static $aFormats = array(
+	protected static $aFormats = array(
 		'csv' => array(
 			'newline' => "\n",
 			'delimiter' => ',',
@@ -1183,7 +1183,7 @@ class Csv
 	);
 
 	// Read all data from file or string
-	private static function readInternal($bFile, $sFilePath, $aOptions)
+	protected static function readInternal($bFile, $sFilePath, $aOptions)
 	{
 		$oCsv = new self($aOptions);
 		$oCsv->initReader($bFile, $sFilePath);
@@ -1258,24 +1258,24 @@ class Csv
 	//////////////////////////////
 	// Internal
 
-	private $aOptions;
-	private $bWriter;
-	private $iFileType; // 0 string, 1 file, 2 gzip
-	private $sPath;
-	private $mHandle;
-	private $iRecordIndex;
-	private $aEscapesFind;
-	private $aEscapesReplace;
-	private $bReadIsComplete;
-	private $sReadBuffer;
-	private $bReadUseQuotes;
-	private $iReadColumnCount;
-	private $iReadMaxTokenLength;
-	private $aReadParseTree;
-	private $aReadParseFind;
+	protected $aOptions;
+	protected $bWriter;
+	protected $iFileType; // 0 string, 1 file, 2 gzip
+	protected $sPath;
+	protected $mHandle;
+	protected $iRecordIndex;
+	protected $aEscapesFind;
+	protected $aEscapesReplace;
+	protected $bReadIsComplete;
+	protected $sReadBuffer;
+	protected $bReadUseQuotes;
+	protected $iReadColumnCount;
+	protected $iReadMaxTokenLength;
+	protected $aReadParseTree;
+	protected $aReadParseFind;
 
 	// Create object, set up options
-	private function __construct($aOptions)
+	protected function __construct($aOptions)
 	{
 		// Fill in default options
 		$this->aOptions = array_merge(
@@ -1336,7 +1336,7 @@ class Csv
 	}
 
 	// Configure object as a reader
-	private function initReader($bFile, $sFilePath)
+	protected function initReader($bFile, $sFilePath)
 	{
 		$this->bWriter = false;
 		$this->sReadBuffer = '';
@@ -1572,7 +1572,7 @@ class Csv
 	}
 
 	// Configure object as a writer
-	private function initWriter($sFilePath)
+	protected function initWriter($sFilePath)
 	{
 		$this->bWriter = true;
 
