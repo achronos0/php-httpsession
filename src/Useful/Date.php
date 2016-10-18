@@ -32,6 +32,26 @@ class Date
 	}
 
 	/**
+	* Create date/time object
+	*
+	* This is an alias for calling constructor:
+	*   $oDate = new \Useful\Date($mDate)
+	* Useful to allow method chaining in older versions of PHP.
+	*
+	* See __construct for more information.
+	*
+	* @param mixed $mDate date/time value
+	* @param string $sFormat date format specifier
+	* @param mixed $mTimezone timezone
+	* @return Date new date/time object
+	* @throws \Exception
+	*/
+	public function create($mDate, $sFormat = null, $mTimezone = null)
+	{
+		return new self($mDate, $sFormat, $mTimezone);
+	}
+
+	/**
 	* Create a date/time object from date parts
 	*
 	* @param int $iYear year part
@@ -560,7 +580,7 @@ class Date
 		);
 
 		// Get argument date
-		$oCompareDate = self::obj($mDate);
+		$oCompareDate = new self($mDate);
 		$oCompareDate->changeTimezone($this->timezone());
 
 		// Prep return mode and calculation flags
@@ -1235,7 +1255,7 @@ class Date
 	*/
 	public function daysInYear()
 	{
-		$oDate = new self(sprintf('%04d-12-31', $this->year());
+		$oDate = new self(sprintf('%04d-12-31', $this->year()));
 		return $oDate->_formatInt('z') + 1;
 	}
 
