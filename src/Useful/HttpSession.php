@@ -960,11 +960,21 @@ class HttpSession
 		$aTemp = array();
 		foreach ($aQueryData as $sName => $mVal) {
 			if (is_array($mVal)) {
-				foreach ($mVal as $sVal)
-					$aTemp[] = rawurlencode($sName) . '=' . rawurlencode($sVal);
+				foreach ($mVal as $sVal) {
+					$aTemp[] =
+						($sVal === null)
+						? rawurlencode($sName)
+						: (rawurlencode($sName) . '=' . rawurlencode($sVal))
+					;
+				}
 			}
-			else
-				$aTemp[] = rawurlencode($sName) . '=' . rawurlencode($mVal);
+			else {
+				$aTemp[] =
+					($mVal === null)
+					? rawurlencode($sName)
+					: (rawurlencode($sName) . '=' . rawurlencode($mVal))
+				;
+			}
 		}
 		return $aTemp ? str_replace('%23', '#', implode('&', $aTemp)) : null;
 	}
@@ -979,16 +989,29 @@ class HttpSession
 	public static function queryToArray($mValue, $aExtraData)
 	{
 		$aQueryData = array();
+		$aProcessData = null;
+		// already an array, each element is one var=>val pair
 		if (is_array($mValue))
 			$aQueryData = $mValue;
-		elseif (is_scalar($mValue)) {
-			$mValue = trim($mValue);
-			$aTemp =
-				(strpos($mValue, '&') !== false && strpos($mValue, PHP_EOL) === false)
-				? explode('&', $mValue)
-				: preg_split('/[\r\n]+/', $mValue)
-			;
-			foreach ($aTemp as $sTemp) {
+		// multiline text, each line is one "var=val" pair
+		elseif (is_string($mValue) && strpos($mValue, PHP_EOL) !== false) {
+			$aProcessData = preg_split('/[\r\n]+/', trim($mValue));
+		}
+		// normal query string, "var=val&var=val"
+		elseif (
+			is_string($mValue)
+			&& (
+				strpos($mValue, '&') !== false
+				|| strpos($mValue, '=') !== false
+			)
+		) {
+			$aProcessData = explode('&', trim($mValue));
+		}
+		// not a normal query string
+		else
+			$aQueryData[strval($mValue)] = null;
+		if ($aProcessData) {
+			foreach ($aProcessData as $sTemp) {
 				if (strpos($sTemp, '=') !== false) {
 					list ($sName, $sValue) = explode('=', $sTemp, 2);
 					$sName = rawurldecode(trim($sName));
@@ -996,7 +1019,7 @@ class HttpSession
 				}
 				else {
 					$sName = rawurldecode($sTemp);
-					$sValue = true;
+					$sValue = null;
 				}
 				if ($sName == '')
 					continue;
