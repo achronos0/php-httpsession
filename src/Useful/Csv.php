@@ -21,7 +21,7 @@ class Csv
 	* @param string $sFilePath file path
 	* @param array $aOptions configuration settings, see docs
 	* @return array parsed data, or false on error
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function read($sFilePath, $aOptions = array())
 	{
@@ -31,11 +31,12 @@ class Csv
 	/**
 	* Parse string into an array
 	*
-	* Get all data from a delimited text string and return as a two-dimensional PHP array.
+	* Convert delimited text content into a two-dimensional PHP array.
 	*
 	* @param string $sContent delimited text content
 	* @param array $aOptions configuration settings, see docs
 	* @return array parsed data, or false on error
+	* @throws \Useful\Exception
 	*/
 	public static function parse($sContent, $aOptions = array())
 	{
@@ -51,10 +52,10 @@ class Csv
 	* If file does not exist it will be created.
 	*
 	* @param string $sFilePath file path
-	* @param $aData array two-dimensional array of data to write
+	* @param array $aData two-dimensional array of data to write
 	* @param array $aOptions configuration settings, see docs
 	* @return void
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function write($sFilePath, $aData, $aOptions = array())
 	{
@@ -75,7 +76,7 @@ class Csv
 	* @param array $aData two-dimensional array of data to write
 	* @param array $aOptions configuration settings, see docs
 	* @return void
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function append($sFilePath, $aData, $aOptions = array())
 	{
@@ -113,7 +114,7 @@ class Csv
 	* @param string $sFilePath file path
 	* @param array $aOptions configuration settings, see docs
 	* @return Csv batch reader object
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function createReader($sFilePath, $aOptions = array())
 	{
@@ -132,7 +133,7 @@ class Csv
 	* @param $sContent string delimited text content
 	* @param array $aOptions configuration settings, see docs
 	* @return Csv string reader object
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function createStringReader($sContent, $aOptions = array())
 	{
@@ -159,7 +160,7 @@ class Csv
 	* @param string $sFilePath file path
 	* @param array $aOptions configuration settings, see docs
 	* @return Csv batch file writer object
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function createWriter($sFilePath, $aOptions = array())
 	{
@@ -179,7 +180,7 @@ class Csv
 	*
 	* @param array $aOptions configuration settings, see docs
 	* @return Csv batch string writer object
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public static function createStringWriter($aOptions = array())
 	{
@@ -253,14 +254,14 @@ class Csv
 	* @param int-ref &$iRecordCount variable is set to actual number of records read
 	* @param string $sMode reading mode: null/"normal", "skip" or "raw"
 	* @return mixed parsed data. Format of parsed data depends on $sMode, see above
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function readBatch(
 		$iRecords = null, &$bReadIsComplete = null, &$iRecordCount = null, $sMode = null
 	)
 	{
 		if ($this->mHandle === null || $this->bWriter)
-			throw new \Exception('Not a valid reader');
+			throw new Exception('Not a valid reader');
 
 		/*
 			$this->aReadParseTree
@@ -340,7 +341,7 @@ class Csv
 				// Check max field length
 				elseif (strlen($sCurrentVal) > $this->aOptions['max_field_length']) {
 					$this->close();
-					throw new \Exception(
+					throw new Exception(
 						'Max field length exceeded at record ' . $this->iRecordIndex
 					);
 				}
@@ -377,7 +378,7 @@ class Csv
 							break;
 						$sBuffer = fread($this->mHandle, $this->aOptions['chunk_size']);
 						if ($sBuffer === false) {
-							throw new \Exception(
+							throw new Exception(
 								'Error while reading from file, offset ' . ftell($this->mHandle)
 							);
 						}
@@ -391,7 +392,7 @@ class Csv
 							break;
 						$sBuffer = gzread($this->mHandle, $this->aOptions['chunk_size']);
 						if ($sBuffer === false) {
-							throw new \Exception(
+							throw new Exception(
 								'Error while reading from gzip file, offset '
 									. gztell($this->mHandle)
 							);
@@ -776,7 +777,7 @@ class Csv
 	* This method is only valid for batch reader objects.
 	*
 	* @return array single parsed record, or null if there are no remaining records
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function readRecord()
 	{
@@ -793,12 +794,12 @@ class Csv
 	*
 	* @param array $aData two-dimensional array of data to write
 	* @return void
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function writeBatch($aData)
 	{
 		if ($this->mHandle === null || !$this->bWriter)
-			throw new \Exception('Not a valid writer');
+			throw new Exception('Not a valid writer');
 
 		if ($this->iRecordIndex <= 0) {
 			// Determine column names from data
@@ -969,7 +970,7 @@ class Csv
 	*
 	* @param array $aRecord single record to write
 	* @return void
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function writeRecord($aRecord)
 	{
@@ -1027,12 +1028,12 @@ class Csv
 	* method returns the total number of data records in the file.
 	*
 	* @return int next record index
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function getRecordIndex()
 	{
 		if ($this->mHandle === null)
-			throw new \Exception('No file handle');
+			throw new Exception('No file handle');
 		return $this->iRecordIndex;
 	}
 
@@ -1040,12 +1041,12 @@ class Csv
 	* Return column names
 	*
 	* @return array column names, null if columns are unknown
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function getColumnNames()
 	{
 		if ($this->mHandle === null)
-			throw new \Exception('No file handle');
+			throw new Exception('No file handle');
 		return $this->aOptions['column_names'];
 	}
 
@@ -1055,12 +1056,12 @@ class Csv
 	* Only valid for batch reader objects.
 	*
 	* @return bool true if reader has finished reading data, false if not
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function isComplete()
 	{
 		if ($this->mHandle === null || $this->bWriter)
-			throw new \Exception('Not a valid reader');
+			throw new Exception('Not a valid reader');
 		return $this->bReadIsComplete;
 	}
 
@@ -1073,12 +1074,12 @@ class Csv
 	*  createWriter() with $sFilePath = null.
 	*
 	* @return string generated delimited text
-	* @throws \Exception
+	* @throws \Useful\Exception
 	*/
 	public function getContent()
 	{
 		if ($this->mHandle === null || !$this->bWriter || $this->iFileType)
-			throw new \Exception('Not a valid string writer');
+			throw new Exception('Not a valid string writer');
 		return $this->mHandle;
 	}
 
@@ -1383,28 +1384,28 @@ class Csv
 			// Confirm file exists
 			$this->sPath = realpath($sFilePath);
 			if (!file_exists($this->sPath))
-				throw new \Exception('Path does not exist');
+				throw new Exception('Path does not exist');
 			if (!is_file($this->sPath))
-				throw new \Exception('Path is not a file');
+				throw new Exception('Path is not a file');
 			if (!is_readable($this->sPath))
-				throw new \Exception('Path is not readable');
+				throw new Exception('Path is not readable');
 
 			// Open file for reading
 			$this->mHandle = fopen($this->sPath, 'rb');
 			if (!$this->mHandle)
-				throw new \Exception('Unable to open file');
+				throw new Exception('Unable to open file');
 
 			// Detect gzip archive
 			if (fread($this->mHandle, 2) == "\x1F\x8B") {
 				// Check for gzip extension
 				if (!function_exists('gzopen'))
-					throw new \Exception('Cannot open gzip file, no fzip extension');
+					throw new Exception('Cannot open gzip file, no fzip extension');
 
 				// Reopen using gzip extension
 				fclose($this->mHandle);
 				$this->mHandle = gzopen($this->sPath, 'rb');
 				if (!$this->mHandle)
-					throw new \Exception('Unable to open gzip archive');
+					throw new Exception('Unable to open gzip archive');
 
 				// Set gzip type
 				$this->iFileType = 2;
@@ -1630,9 +1631,9 @@ class Csv
 			if (file_exists($sFilePath)) {
 				$this->sPath = realpath($sFilePath);
 				if (!is_file($this->sPath))
-					throw new \Exception('Path is not a file');
+					throw new Exception('Path is not a file');
 				if (!is_writable($this->sPath))
-					throw new \Exception('Path is not writable');
+					throw new Exception('Path is not writable');
 
 				// We only append if file actually has content
 				if (filesize($sFilePath))
@@ -1676,12 +1677,12 @@ class Csv
 			if ($this->iFileType == 1) {
 				$this->mHandle = fopen($this->sPath, $sMode);
 				if (!$this->mHandle)
-					throw new \Exception('Unable to open file');
+					throw new Exception('Unable to open file');
 			}
 			else {
 				$this->mHandle = gzopen($this->sPath, $sMode);
 				if (!$this->mHandle)
-					throw new \Exception('Unable to open gzip archive');
+					throw new Exception('Unable to open gzip archive');
 			}
 		}
 
@@ -1691,4 +1692,8 @@ class Csv
 			$this->mHandle = '';
 		}
 	}
+}
+
+if (!class_exists('Useful\\Exception', false)) {
+	class Exception extends \Exception {};
 }
