@@ -1,4 +1,4 @@
-<?
+<?php
 /**
 * Parse and generate delimited text data (CSV, TSV, etc.)
 *
