@@ -1,0 +1,23 @@
+{
+	"name": "achronos0/useful",
+	"version": "0.1.0",
+	"time" : "2016-11-20",
+	"description": "Useful is a PHP non-framework. It's a collection use utility classes. Take what you want, leave the rest.",
+	"homepage": "https://github.com/achronos0/useful",
+	"license" : "Apache-2.0",
+	"authors": [
+		{
+			"name": "Ky Patterson",
+			"email": "me@achronos.ca"
+		}
+	],
+	"require": {
+		"php": "^5.4 || ^7.0",
+		"ext-curl": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Useful\\": "src/Useful/"
+		}
+	}
+}
