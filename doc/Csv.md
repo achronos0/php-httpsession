@@ -53,6 +53,12 @@ In most cases, you can use one of the static methods to read/write CSV in one li
 
 		$sCsvContent = Csv::generate($aData);
 
+*	`download`
+
+	Output CSV content to browser from an array
+
+		Csv::download($aData, $sFileName);
+
 When handling large amounts of data, create a batch reader/writer object:
 
 *	`createReader`
