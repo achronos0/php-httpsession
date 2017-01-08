@@ -102,6 +102,46 @@ class Csv
 	}
 
 	/**
+	* Output CSV content to browser from an array
+	*
+	* Send a delimited text file to browser using data from a two-dimensional PHP array.
+	*
+	* This function also outputs relevant HTTP headers for CSV download (Content-Type,
+	* Content-Disposition, etc.).
+	*
+	* @param array $aData two-dimensional array of data to write
+	* @param string $sFilename suggested name for downloaded file
+	* @param array $aOptions configuration settings, see docs
+	* @return void
+	* @throws \Useful\Exception
+	*/
+	public static function download($aData, $sFilename, $aOptions = array())
+	{
+		// Output HTTP headers
+		header('Content-Type: application/csv; charset=UTF-8');
+		header(
+			'Content-Disposition: attachment; filename="'
+			. str_replace('"', '\\"', $sFilename)
+			. '"'
+		);
+		header('Pragma: no-cache');
+
+		// Output UTF-8 BOM (byte order mark)
+		// [2017-01 kp] needed for old versions of MS Excel to recognize UTF-8 encoding
+		echo "\xEF\xBB\xBF";
+
+		// Output CSV content
+		try {
+			self::write('php://output', $aData, $aOptions);
+		}
+		catch (Exception $e) {
+			header('Content-Type: text/html; charset=UTF-8');
+			header('Content-Disposition: inline; ');
+			throw $e;
+		}
+	}
+
+	/**
 	* Create a batch file reader
 	*
 	* Create an object for reading a delimited text file one section at a time.
@@ -185,7 +225,7 @@ class Csv
 	public static function createStringWriter($aOptions = array())
 	{
 		$oCsv = new self($aOptions);
-		$oCsv->initWriter($sFilePath);
+		$oCsv->initWriter(false);
 		return $oCsv;
 	}
 
