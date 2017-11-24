@@ -740,10 +740,24 @@ class Csv
 				// Store record as associative array
 				if ($this->aOptions['associative']) {
 					$aFinal = array();
-					for ($iCol = 0; $iCol < $iCount; $iCol++)
-						$aFinal[$this->aOptions['column_names'][$iCol]] = $aCurrentRec[$iCol];
-					for ($iCol = $iCount; $iCol < $this->iReadColumnCount; $iCol++)
+					for ($iCol = 0; $iCol < $this->iReadColumnCount; $iCol++) {
+                        $sColName = $this->aOptions['column_names'][$iCol];
+                        $mValue = isset($aCurrentRec[$iCol]) ? $aCurrentRec[$iCol] : null;
+                        if (isset($aFinal[$sColName])) {
+                            if (is_array($aFinal[$sColName])) {
+                                $aFinal[$sColName][] = $mValue;
+                            }
+                            else {
+                                $aFinal[$sColName] = array( $aFinal[$sColName], $mValue);
+                            }
+                        }
+                        else {
+                            $aFinal[$sColName] = $mValue;
+                        }
+                    }
+					for ($iCol = $iCount; $iCol < $this->iReadColumnCount; $iCol++) {
 						$aFinal[$this->aOptions['column_names'][$iCol]] = null;
+                    }
 					$aFinalData[] = $aFinal;
 				}
 

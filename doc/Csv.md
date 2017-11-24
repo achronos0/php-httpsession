@@ -231,6 +231,10 @@ Whether to treat record arrays as associative (i.e. named keys) or vector:
 For reading, default is `true`.
 For writing, default is `null`.
 
+Duplicate column headers on read: if multiple columns have the same name and `associative` is
+`true`, values will be aggregated into an array in the result data. (Blank entries will be
+present as `null` values.)
+
 #### `column_names`
 Field labels.
 
