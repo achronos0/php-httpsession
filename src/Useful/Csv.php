@@ -1,10 +1,11 @@
 <?php
 /**
-* Parse and generate delimited text data (CSV, TSV, etc.)
-*
-* @link https://github.com/achronos0/useful
-* @copyright Ky Patterson 2016, licensed under Apache 2.0
-*/
+ * \Useful\Csv class
+ *
+ * @link https://github.com/achronos0/useful
+ * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
+ * @package Useful
+ */
 
 /*==NAMESPACE*/
 namespace Useful;
@@ -13,55 +14,58 @@ if (!class_exists('Useful\\Exception', false)) {
 }
 /*NAMESPACE==*/
 
+/**
+ * Parse and generate delimited text data (CSV, TSV, etc.)
+ */
 class Csv
 {
 	//////////////////////////////
 	// Public static
 
 	/**
-	* Read file into an array
-	*
-	* Read all data from a delimited text file and return as a two-dimensional PHP array.
-	*
-	* @param string $sFilePath file path
-	* @param array $aOptions configuration settings, see docs
-	* @return array parsed data, or false on error
-	* @throws \Useful\Exception
-	*/
+	 * Read file into an array
+	 *
+	 * Read all data from a delimited text file and return as a two-dimensional PHP array.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aOptions configuration settings, see docs
+	 * @return array parsed data, or false on error
+	 * @throws \Useful\Exception
+	 */
 	public static function read($sFilePath, $aOptions = array())
 	{
 		return self::readInternal(true, $sFilePath, $aOptions);
 	}
 
 	/**
-	* Parse string into an array
-	*
-	* Convert delimited text content into a two-dimensional PHP array.
-	*
-	* @param string $sContent delimited text content
-	* @param array $aOptions configuration settings, see docs
-	* @return array parsed data, or false on error
-	* @throws \Useful\Exception
-	*/
+	 * Parse string into an array
+	 *
+	 * Convert delimited text content into a two-dimensional PHP array.
+	 *
+	 * @param string $sContent delimited text content
+	 * @param array $aOptions configuration settings, see docs
+	 * @return array parsed data, or false on error
+	 * @throws \Useful\Exception
+	 */
 	public static function parse($sContent, $aOptions = array())
 	{
 		return self::readInternal(false, $sContent, $aOptions);
 	}
 
 	/**
-	* Write file from an array
-	*
-	* Write a delimited text file using data from a two-dimensional PHP array.
-	*
-	* If file exists it will be truncated, unless 'append' option is included.
-	* If file does not exist it will be created.
-	*
-	* @param string $sFilePath file path
-	* @param array $aData two-dimensional array of data to write
-	* @param array $aOptions configuration settings, see docs
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Write file from an array
+	 *
+	 * Write a delimited text file using data from a two-dimensional PHP array.
+	 *
+	 * If file exists it will be truncated, unless 'append' option is included.
+	 * If file does not exist it will be created.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aData two-dimensional array of data to write
+	 * @param array $aOptions configuration settings, see docs
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public static function write($sFilePath, $aData, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -71,18 +75,18 @@ class Csv
 	}
 
 	/**
-	* Append an array to a CSV file
-	*
-	* Append to a delimited text file using data from a two-dimensional PHP array.
-	*
-	* If file does not exist it will be created.
-	*
-	* @param string $sFilePath file path
-	* @param array $aData two-dimensional array of data to write
-	* @param array $aOptions configuration settings, see docs
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Append an array to a CSV file
+	 *
+	 * Append to a delimited text file using data from a two-dimensional PHP array.
+	 *
+	 * If file does not exist it will be created.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aData two-dimensional array of data to write
+	 * @param array $aOptions configuration settings, see docs
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public static function append($sFilePath, $aData, $aOptions = array())
 	{
 		$aOptions['append'] = true;
@@ -90,14 +94,14 @@ class Csv
 	}
 
 	/**
-	* Generate string from array
-	*
-	* Generate delimited text content using data from a two-dimensional PHP array.
-	*
-	* @param array $aData two-dimensional array of data to write
-	* @param array $aOptions configuration settings, see docs
-	* @return string generated delimited text
-	*/
+	 * Generate string from array
+	 *
+	 * Generate delimited text content using data from a two-dimensional PHP array.
+	 *
+	 * @param array $aData two-dimensional array of data to write
+	 * @param array $aOptions configuration settings, see docs
+	 * @return string generated delimited text
+	 */
 	public static function generate($aData, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -107,19 +111,19 @@ class Csv
 	}
 
 	/**
-	* Output CSV content to browser from an array
-	*
-	* Send a delimited text file to browser using data from a two-dimensional PHP array.
-	*
-	* This function also outputs relevant HTTP headers for CSV download (Content-Type,
-	* Content-Disposition, etc.).
-	*
-	* @param array $aData two-dimensional array of data to write
-	* @param string $sFilename suggested name for downloaded file
-	* @param array $aOptions configuration settings, see docs
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Output CSV content to browser from an array
+	 *
+	 * Send a delimited text file to browser using data from a two-dimensional PHP array.
+	 *
+	 * This function also outputs relevant HTTP headers for CSV download (Content-Type,
+	 * Content-Disposition, etc.).
+	 *
+	 * @param array $aData two-dimensional array of data to write
+	 * @param string $sFilename suggested name for downloaded file
+	 * @param array $aOptions configuration settings, see docs
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public static function download($aData, $sFilename, $aOptions = array())
 	{
 		// Output HTTP headers
@@ -147,20 +151,20 @@ class Csv
 	}
 
 	/**
-	* Create a batch file reader
-	*
-	* Create an object for reading a delimited text file one section at a time.
-	*
-	* Batch reading allows very large files to be processed while using a limited amount of
-	* memory.
-	*
-	* To quickly read an entire file into an array, call Csv::read() instead.
-	*
-	* @param string $sFilePath file path
-	* @param array $aOptions configuration settings, see docs
-	* @return Csv batch reader object
-	* @throws \Useful\Exception
-	*/
+	 * Create a batch file reader
+	 *
+	 * Create an object for reading a delimited text file one section at a time.
+	 *
+	 * Batch reading allows very large files to be processed while using a limited amount of
+	 * memory.
+	 *
+	 * To quickly read an entire file into an array, call Csv::read() instead.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aOptions configuration settings, see docs
+	 * @return Csv batch reader object
+	 * @throws \Useful\Exception
+	 */
 	public static function createReader($sFilePath, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -169,17 +173,17 @@ class Csv
 	}
 
 	/**
-	* Create a CSV string batch reader
-	*
-	* Create an object for reading a delimited text string in batches.
-	*
-	* To quickly parse a single array, call Csv::parse() instead.
-	*
-	* @param $sContent string delimited text content
-	* @param array $aOptions configuration settings, see docs
-	* @return Csv string reader object
-	* @throws \Useful\Exception
-	*/
+	 * Create a CSV string batch reader
+	 *
+	 * Create an object for reading a delimited text string in batches.
+	 *
+	 * To quickly parse a single array, call Csv::parse() instead.
+	 *
+	 * @param $sContent string delimited text content
+	 * @param array $aOptions configuration settings, see docs
+	 * @return Csv string reader object
+	 * @throws \Useful\Exception
+	 */
 	public static function createStringReader($sContent, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -188,25 +192,25 @@ class Csv
 	}
 
 	/**
-	* Create a file batch writer
-	*
-	* Create an object for writing or appending to a delimited text file one section at a time.
-	*
-	* If file exists it will be truncated, unless 'append' option is included.
-	* If file does not exist it will be created.
-	*
-	* To generate delimited content in batches, but store content in memory instead of writing to
-	*  file, pass false for $sFilePath.
-	* Get the finalized content by calling getContent().
-	*
-	* To quickly write an entire file from a single array, call Csv::write() instead.
-	* To quickly generate a delimited string in memory, call Csv::generate() instead.
-	*
-	* @param string $sFilePath file path
-	* @param array $aOptions configuration settings, see docs
-	* @return Csv batch file writer object
-	* @throws \Useful\Exception
-	*/
+	 * Create a file batch writer
+	 *
+	 * Create an object for writing or appending to a delimited text file one section at a time.
+	 *
+	 * If file exists it will be truncated, unless 'append' option is included.
+	 * If file does not exist it will be created.
+	 *
+	 * To generate delimited content in batches, but store content in memory instead of writing to
+	 *  file, pass false for $sFilePath.
+	 * Get the finalized content by calling getContent().
+	 *
+	 * To quickly write an entire file from a single array, call Csv::write() instead.
+	 * To quickly generate a delimited string in memory, call Csv::generate() instead.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aOptions configuration settings, see docs
+	 * @return Csv batch file writer object
+	 * @throws \Useful\Exception
+	 */
 	public static function createWriter($sFilePath, $aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -215,18 +219,18 @@ class Csv
 	}
 
 	/**
-	* Create a string batch writer
-	*
-	* Create an object for generating delimited text content one section at a time.
-	*
-	* When done, get the finalized content by calling getContent().
-	*
-	* To quickly generate a delimited string in memory, call Csv::generate() instead.
-	*
-	* @param array $aOptions configuration settings, see docs
-	* @return Csv batch string writer object
-	* @throws \Useful\Exception
-	*/
+	 * Create a string batch writer
+	 *
+	 * Create an object for generating delimited text content one section at a time.
+	 *
+	 * When done, get the finalized content by calling getContent().
+	 *
+	 * To quickly generate a delimited string in memory, call Csv::generate() instead.
+	 *
+	 * @param array $aOptions configuration settings, see docs
+	 * @return Csv batch string writer object
+	 * @throws \Useful\Exception
+	 */
 	public static function createStringWriter($aOptions = array())
 	{
 		$oCsv = new self($aOptions);
@@ -235,27 +239,27 @@ class Csv
 	}
 
 	/**
-	* Add custom predefined formats
-	*
-	* In addition to the standard built-in 'format' values (csv, tsv), it is possible to define
-	* custom formats.
-	*
-	* Each format has a name, which is the value of the 'format' option, and an array of options
-	*  to be automatically applied when that format is specified.
-	*
-	* @param array $aFormats new formats to register
-	* @return void
-	*/
+	 * Add custom predefined formats
+	 *
+	 * In addition to the standard built-in 'format' values (csv, tsv), it is possible to define
+	 * custom formats.
+	 *
+	 * Each format has a name, which is the value of the 'format' option, and an array of options
+	 *  to be automatically applied when that format is specified.
+	 *
+	 * @param array $aFormats new formats to register
+	 * @return void
+	 */
 	public static function registerFormats($aFormats)
 	{
 		self::$aFormats = array_merge(self::$aFormats, $aFormats);
 	}
 
 	/**
-	* Return all registered predefined formats
-	*
-	* @return array call type names and definitions
-	*/
+	 * Return all registered predefined formats
+	 *
+	 * @return array call type names and definitions
+	 */
 	public static function getRegisteredFormats()
 	{
 		return self::$aFormats;
@@ -266,41 +270,41 @@ class Csv
 	// Public
 
 	/**
-	* Read batch of records
-	*
-	* Read next section of records and return as a two-dimensional PHP array.
-	*
-	* This method is only valid for batch reader objects.
-	*
-	* Alternatively, pass $sMode param to quickly read forward in the file without fully processing
-	*  the content.
-	* This can achieve significant time and memory savings when you do not need to read the parsed
-	*  data, e.g. when skipping records or transcribing the data exactly.
-	* Accepted $sMode values:
-	*   normal (or null)
-	*     Normal parsing mode.
-	*     Return value is (array) two-dimensional array of records read.
-	*     At end-of-file, returns empty array.
-	*   skip
-	*     Skip records, do not return any data.
-	*     Useful if you need to start at a certain line number, or you need an accurate line count
-	*      but don't need the data.
-	*     Return value is (int) number of records read.
-	*     At end-of-file, returns 0.
-	*   raw
-	*     Return records as raw content.
-	*     Useful if you need to have a known number of records, but do not need to process the
-	*      data (e.g. copying a block of records to a new location, with no changes).
-	*     Return value is (string) raw content read, including all delimiters and escapes.
-	*     At end-of-file, returns empty string.
-	*
-	* @param int $iRecords maximum number of records to read, or null to read all remaining records
-	* @param bool-ref &$bReadIsComplete variable is set to true if all records have been read
-	* @param int-ref &$iRecordCount variable is set to actual number of records read
-	* @param string $sMode reading mode: null/"normal", "skip" or "raw"
-	* @return mixed parsed data. Format of parsed data depends on $sMode, see above
-	* @throws \Useful\Exception
-	*/
+	 * Read batch of records
+	 *
+	 * Read next section of records and return as a two-dimensional PHP array.
+	 *
+	 * This method is only valid for batch reader objects.
+	 *
+	 * Alternatively, pass $sMode param to quickly read forward in the file without fully processing
+	 *  the content.
+	 * This can achieve significant time and memory savings when you do not need to read the parsed
+	 *  data, e.g. when skipping records or transcribing the data exactly.
+	 * Accepted $sMode values:
+	 *   normal (or null)
+	 *     Normal parsing mode.
+	 *     Return value is (array) two-dimensional array of records read.
+	 *     At end-of-file, returns empty array.
+	 *   skip
+	 *     Skip records, do not return any data.
+	 *     Useful if you need to start at a certain line number, or you need an accurate line count
+	 *      but don't need the data.
+	 *     Return value is (int) number of records read.
+	 *     At end-of-file, returns 0.
+	 *   raw
+	 *     Return records as raw content.
+	 *     Useful if you need to have a known number of records, but do not need to process the
+	 *      data (e.g. copying a block of records to a new location, with no changes).
+	 *     Return value is (string) raw content read, including all delimiters and escapes.
+	 *     At end-of-file, returns empty string.
+	 *
+	 * @param int $iRecords maximum number of records to read, or null to read all remaining records
+	 * @param bool-ref &$bReadIsComplete variable is set to true if all records have been read
+	 * @param int-ref &$iRecordCount variable is set to actual number of records read
+	 * @param string $sMode reading mode: null/"normal", "skip" or "raw"
+	 * @return mixed parsed data. Format of parsed data depends on $sMode, see above
+	 * @throws \Useful\Exception
+	 */
 	public function readBatch(
 		$iRecords = null, &$bReadIsComplete = null, &$iRecordCount = null, $sMode = null
 	)
@@ -826,18 +830,18 @@ class Csv
 	}
 
 	/**
-	* Read one record
-	*
-	* Read next record and return as a PHP array.
-	*
-	* This is the same as:
-	*   $oRec = $oCsv->readBatch(1)
-	*
-	* This method is only valid for batch reader objects.
-	*
-	* @return array single parsed record, or null if there are no remaining records
-	* @throws \Useful\Exception
-	*/
+	 * Read one record
+	 *
+	 * Read next record and return as a PHP array.
+	 *
+	 * This is the same as:
+	 *   $oRec = $oCsv->readBatch(1)
+	 *
+	 * This method is only valid for batch reader objects.
+	 *
+	 * @return array single parsed record, or null if there are no remaining records
+	 * @throws \Useful\Exception
+	 */
 	public function readRecord()
 	{
 		$aData = $this->readBatch(1);
@@ -845,16 +849,16 @@ class Csv
 	}
 
 	/**
-	* Write batch of records
-	*
-	* Write next section of records from a two-dimensional PHP array.
-	*
-	* This method is only valid for batch writer objects.
-	*
-	* @param array $aData two-dimensional array of data to write
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Write batch of records
+	 *
+	 * Write next section of records from a two-dimensional PHP array.
+	 *
+	 * This method is only valid for batch writer objects.
+	 *
+	 * @param array $aData two-dimensional array of data to write
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public function writeBatch($aData)
 	{
 		if ($this->mHandle === null || !$this->bWriter)
@@ -1018,32 +1022,32 @@ class Csv
 	}
 
 	/**
-	* Write one record
-	*
-	* Write a single delimited text record from a one-dimensional PHP array.
-	*
-	* This method is only valid for batch writer objects.
-	*
-	* This is the same as calling
-	*   $oCsv->writeBatch(array($aRecord));
-	*
-	* @param array $aRecord single record to write
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Write one record
+	 *
+	 * Write a single delimited text record from a one-dimensional PHP array.
+	 *
+	 * This method is only valid for batch writer objects.
+	 *
+	 * This is the same as calling
+	 *   $oCsv->writeBatch(array($aRecord));
+	 *
+	 * @param array $aRecord single record to write
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public function writeRecord($aRecord)
 	{
 		return $this->writeBatch(array( $aRecord ));
 	}
 
 	/**
-	* Close file and end processing
-	*
-	* Explicitly close the file on which this object operates.
-	* This leaves the object in an invalid state, no further calls are possible.
-	*
-	* @return bool true
-	*/
+	 * Close file and end processing
+	 *
+	 * Explicitly close the file on which this object operates.
+	 * This leaves the object in an invalid state, no further calls are possible.
+	 *
+	 * @return bool true
+	 */
 	public function close()
 	{
 		if ($this->mHandle === null)
@@ -1061,34 +1065,34 @@ class Csv
 	}
 
 	/**
-	* Return file path
-	*
-	* Returns full path of file on which this object operates.
-	*
-	* @return string file path
-	*/
+	 * Return file path
+	 *
+	 * Returns full path of file on which this object operates.
+	 *
+	 * @return string file path
+	 */
 	public function getPath()
 	{
 		return $this->sPath;
 	}
 
 	/**
-	* Return record number
-	*
-	* Return next record index. This is the number of the record that will be read or written
-	* next time readBatch() or readRecord() is called.
-	*
-	* The first record in the file is index zero.
-	*
-	* If there is a header row, it does not count as a record.
-	* If the header row has not been read/written yet, this method returns -1.
+	 * Return record number
+	 *
+	 * Return next record index. This is the number of the record that will be read or written
+	 * next time readBatch() or readRecord() is called.
+	 *
+	 * The first record in the file is index zero.
+	 *
+	 * If there is a header row, it does not count as a record.
+	 * If the header row has not been read/written yet, this method returns -1.
 
-	* For batch reader objects, once all content has been read (isComplete() returns true), this
-	* method returns the total number of data records in the file.
-	*
-	* @return int next record index
-	* @throws \Useful\Exception
-	*/
+	 * For batch reader objects, once all content has been read (isComplete() returns true), this
+	 * method returns the total number of data records in the file.
+	 *
+	 * @return int next record index
+	 * @throws \Useful\Exception
+	 */
 	public function getRecordIndex()
 	{
 		if ($this->mHandle === null)
@@ -1097,11 +1101,11 @@ class Csv
 	}
 
 	/**
-	* Return column names
-	*
-	* @return array column names, null if columns are unknown
-	* @throws \Useful\Exception
-	*/
+	 * Return column names
+	 *
+	 * @return array column names, null if columns are unknown
+	 * @throws \Useful\Exception
+	 */
 	public function getColumnNames()
 	{
 		if ($this->mHandle === null)
@@ -1110,13 +1114,13 @@ class Csv
 	}
 
 	/**
-	* Check whether file has been completely read
-	*
-	* Only valid for batch reader objects.
-	*
-	* @return bool true if reader has finished reading data, false if not
-	* @throws \Useful\Exception
-	*/
+	 * Check whether file has been completely read
+	 *
+	 * Only valid for batch reader objects.
+	 *
+	 * @return bool true if reader has finished reading data, false if not
+	 * @throws \Useful\Exception
+	 */
 	public function isComplete()
 	{
 		if ($this->mHandle === null || $this->bWriter)
@@ -1125,16 +1129,16 @@ class Csv
 	}
 
 	/**
-	* Return generated content
-	*
-	* Return delimited text data generated by this object.
-	*
-	* This method is only valid for writer objects that do not write to file, created by
-	*  createWriter() with $sFilePath = null.
-	*
-	* @return string generated delimited text
-	* @throws \Useful\Exception
-	*/
+	 * Return generated content
+	 *
+	 * Return delimited text data generated by this object.
+	 *
+	 * This method is only valid for writer objects that do not write to file, created by
+	 *  createWriter() with $sFilePath = null.
+	 *
+	 * @return string generated delimited text
+	 * @throws \Useful\Exception
+	 */
 	public function getContent()
 	{
 		if ($this->mHandle === null || !$this->bWriter || $this->iFileType)
@@ -1143,31 +1147,31 @@ class Csv
 	}
 
 	/**
-	* Return whether object can be used
-	*
-	* @return bool true if object is valid and can be read from/written to, false if object is
-	*  invalid for use
-	*/
+	 * Return whether object can be used
+	 *
+	 * @return bool true if object is valid and can be read from/written to, false if object is
+	 *  invalid for use
+	 */
 	public function isValid()
 	{
 		return $this->mHandle;
 	}
 
 	/**
-	* Return whether object is a reader or writer
-	*
-	* @return bool true if writer, false if reader
-	*/
+	 * Return whether object is a reader or writer
+	 *
+	 * @return bool true if writer, false if reader
+	 */
 	public function isWriter()
 	{
 		return $this->bWriter;
 	}
 
 	/**
-	* Return file type
-	*
-	* @return string file type, one of: "string", "file" or "gzip"
-	*/
+	 * Return file type
+	 *
+	 * @return string file type, one of: "string", "file" or "gzip"
+	 */
 	public function getFileType()
 	{
 		switch ($this->iFileType) {
@@ -1181,25 +1185,25 @@ class Csv
 	}
 
 	/**
-	* Return current options
-	*
-	* @return array options
-	*/
+	 * Return current options
+	 *
+	 * @return array options
+	 */
 	public function getOptions()
 	{
 		return $this->aOptions;
 	}
 
 	/**
-	* Change options
-	*
-	* Note: changing options can have unpredictable results. In particular:
-	*   * Changing format-related options is not supported.
-	*   * Reducing size of column_names array is not supported
-	*
-	* @param array $aOptions new options to set
-	* @return void
-	*/
+	 * Change options
+	 *
+	 * Note: changing options can have unpredictable results. In particular:
+	 *   * Changing format-related options is not supported.
+	 *   * Reducing size of column_names array is not supported
+	 *
+	 * @param array $aOptions new options to set
+	 * @return void
+	 */
 	public function setOptions($aOptions)
 	{
 		$this->aOptions = array_merge($this->aOptions, $aOptions);
@@ -1210,12 +1214,12 @@ class Csv
 	// Internal static
 
 	/**
-	* internal
-	*/
+	 * internal
+	 */
 	const LF = "\x0A";
 	/**
-	* internal
-	*/
+	 * internal
+	 */
 	const CRLF = "\x0D\x0A";
 
 	protected static $aFormats = array(
@@ -1413,8 +1417,8 @@ class Csv
 	}
 
 	/**
-	* Internal
-	*/
+	 * Internal
+	 */
 	public function __destruct()
 	{
 		$this->close();

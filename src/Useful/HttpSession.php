@@ -1,10 +1,11 @@
 <?php
 /**
-* Manage an HTTP session
-*
-* @link https://github.com/morvren-achronos/useful
-* @copyright Morvren-Achronos 2019, licensed under Apache 2.0
-*/
+ * \Useful\HttpSession class
+ *
+ * @link https://github.com/morvren-achronos/useful
+ * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
+ * @package Useful
+ */
 
 /*==NAMESPACE*/
 namespace Useful;
@@ -13,27 +14,30 @@ if (!class_exists('Useful\\Exception', false)) {
 }
 /*NAMESPACE==*/
 
+/**
+ * Manage an HTTP session
+ */
 class HttpSession
 {
 	//////////////////////////////
 	// Public static
 
 	/**
-	* Set global default parameters
-	*
-	* Global default parameters are used as initial session defaults for new session objects.
-	*
-	* Common global default parameters:
-	*   * ssl_ca_file
-	*   * ssl_ignore_cert
-	*   * charset
-	*   * agent
-	*
-	* See docs for a reference of all available call parameters.
-	*
-	* @param array $aParams global default call parameters to set
-	* @return bool true
-	*/
+	 * Set global default parameters
+	 *
+	 * Global default parameters are used as initial session defaults for new session objects.
+	 *
+	 * Common global default parameters:
+	 *   * ssl_ca_file
+	 *   * ssl_ignore_cert
+	 *   * charset
+	 *   * agent
+	 *
+	 * See docs for a reference of all available call parameters.
+	 *
+	 * @param array $aParams global default call parameters to set
+	 * @return bool true
+	 */
 	public static function setDefaultParams($aParams)
 	{
 		self::$aDefaultParams = self::prepParams($aParams, self::$aDefaultParams);
@@ -41,59 +45,59 @@ class HttpSession
 	}
 
 	/**
-	* Get global default parameters
-	*
-	* Global default parameters are used as initial session defaults for new session objects.
-	*
-	* @return array all global default call parameters
-	*/
+	 * Get global default parameters
+	 *
+	 * Global default parameters are used as initial session defaults for new session objects.
+	 *
+	 * @return array all global default call parameters
+	 */
 	public static function getDefaultParams()
 	{
 		return self::$aDefaultParams;
 	}
 
 	/**
-	* Add custom call types
-	*
-	* In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it
-	*  is possible to define custom types.
-	*
-	* Each type has a name, which is the value used in the 'type' call parameter, and an array of
-	*  definition data.
-	*
-	* At the moment only one definition element is defined:
-	*   handler
-	*     (callback) handler function that prepares data when this type is used in a call
-	*
-	* Handler function signature:
-	*   function (array $aParams, HttpSession $oHttp): array
-	*
-	* Arguments:
-	*   array       $aParams all call parameters
-	*   HttpSession $oHttp   session object
-	*
-	* Return: array callback may return any/all of these keys:
-	*   post_mode
-	*     string on of the following: get form data file
-	*   post_data
-	*     mixed finalized request body, formatted per post_mode
-	*     See documentation.
-	*   params
-	*     array call parameters to change.
-	*
-	* @param array $aCallTypes new call types to register
-	* @return void
-	*/
+	 * Add custom call types
+	 *
+	 * In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it
+	 *  is possible to define custom types.
+	 *
+	 * Each type has a name, which is the value used in the 'type' call parameter, and an array of
+	 *  definition data.
+	 *
+	 * At the moment only one definition element is defined:
+	 *   handler
+	 *     (callback) handler function that prepares data when this type is used in a call
+	 *
+	 * Handler function signature:
+	 *   function (array $aParams, HttpSession $oHttp): array
+	 *
+	 * Arguments:
+	 *   array       $aParams all call parameters
+	 *   HttpSession $oHttp   session object
+	 *
+	 * Return: array callback may return any/all of these keys:
+	 *   post_mode
+	 *     string on of the following: get form data file
+	 *   post_data
+	 *     mixed finalized request body, formatted per post_mode
+	 *     See documentation.
+	 *   params
+	 *     array call parameters to change.
+	 *
+	 * @param array $aCallTypes new call types to register
+	 * @return void
+	 */
 	public static function registerCallTypes($aCallTypes)
 	{
 		self::$aCallTypes = array_merge(self::$aCallTypes, $aCallTypes);
 	}
 
 	/**
-	* Return all registered call types
-	*
-	* @return array call type names and definitions
-	*/
+	 * Return all registered call types
+	 *
+	 * @return array call type names and definitions
+	 */
 	public static function getRegisteredCallTypes()
 	{
 		return self::$aCallTypes;
@@ -104,31 +108,31 @@ class HttpSession
 	// Public
 
 	/**
-	* Return an object for making HTTP/HTTPS requests
-	*
-	* @param array $aParams session default call parameters to set
-	*/
+	 * Return an object for making HTTP/HTTPS requests
+	 *
+	 * @param array $aParams session default call parameters to set
+	 */
 	public function __construct($aParams = array())
 	{
 		$this->aParams = self::prepParams($aParams, self::$aDefaultParams);
 	}
 
 	/**
-	* Set session default parameters
-	*
-	* Session default parameters are applied to all requests made by this object.
-	*
-	* Common session default parameters:
-	*   * host
-	*   * ssl
-	*   * charset
-	*   * headers
-	*
-	* See docs for a reference of all available call parameters.
-	*
-	* @param array $aParams session default call parameters to set
-	* @return bool true
-	*/
+	 * Set session default parameters
+	 *
+	 * Session default parameters are applied to all requests made by this object.
+	 *
+	 * Common session default parameters:
+	 *   * host
+	 *   * ssl
+	 *   * charset
+	 *   * headers
+	 *
+	 * See docs for a reference of all available call parameters.
+	 *
+	 * @param array $aParams session default call parameters to set
+	 * @return bool true
+	 */
 	public function setParams($aParams)
 	{
 		$this->aParams = self::prepParams($aParams, $this->aParams);
@@ -136,27 +140,27 @@ class HttpSession
 	}
 
 	/**
-	* Get session default parameters
-	*
-	* Session default parameters are applied to all requests made by this object.
-	*
-	* @return array session default call parameters
-	*/
+	 * Get session default parameters
+	 *
+	 * Session default parameters are applied to all requests made by this object.
+	 *
+	 * @return array session default call parameters
+	 */
 	public function getParams()
 	{
 		return $this->aParams;
 	}
 
 	/**
-	* Store additional data with session
-	*
-	* This additional data is not used by HttpSession but can be used by attached custom
-	*  routines (e.g. parser_callback, logger_callback).
-	*
-	* @param array $aData session additional data
-	* @param bool  $bClear true to remove existing data, false to merge old and new data
-	* @return bool true
-	*/
+	 * Store additional data with session
+	 *
+	 * This additional data is not used by HttpSession but can be used by attached custom
+	 *  routines (e.g. parser_callback, logger_callback).
+	 *
+	 * @param array $aData session additional data
+	 * @param bool  $bClear true to remove existing data, false to merge old and new data
+	 * @return bool true
+	 */
 	public function setData($aData, $bClear = false)
 	{
 		$this->aParams['data'] =
@@ -168,93 +172,93 @@ class HttpSession
 	}
 
 	/**
-	* Get session additional data
-	*
-	* This additional data is not used by HttpSession but can be used by attached custom
-	*  routines (e.g. parser_callback, logger_callback).
-	*
-	* @return array session additional data
-	*/
+	 * Get session additional data
+	 *
+	 * This additional data is not used by HttpSession but can be used by attached custom
+	 *  routines (e.g. parser_callback, logger_callback).
+	 *
+	 * @return array session additional data
+	 */
 	public function getData()
 	{
 		return $this->aParams['data'];
 	}
 
 	/**
-	* Get reference to session additional data
-	*
-	* This additional data is not used by HttpSession but can be used by attached custom
-	*  routines (e.g. parser_callback, logger_callback).
-	*
-	* @return array-ref session additional data
-	*/
+	 * Get reference to session additional data
+	 *
+	 * This additional data is not used by HttpSession but can be used by attached custom
+	 *  routines (e.g. parser_callback, logger_callback).
+	 *
+	 * @return array-ref session additional data
+	 */
 	public function &getDataRef()
 	{
 		return $this->aParams['data'];
 	}
 
 	/**
-	* Execute an HTTP request and return response content
-	*
-	* Call is executed based on call parameters passed in $aParams, using session defaults
-	*  for parameters that are not specified.
-	*
-	* Common call-time call parameters:
-	*   * url
-	*   * headers
-	*   * post
-	*   * type
-	*
-	* See docs for a reference of all available call parameters.
-	*
-	* The function will return the response content as a string, unless the 'download' parameter
-	*  is in use.
-	*
-	* On a communication failure or HTTP error, the function will return false.
-	* Call httpError() to get a text description of the error.
-	*
-	* To always return response content, even when the server returns an error HTTP status code,
-	*  use the 'ignore_failure' call parameter.
-	*
-	* To gather detailed information about the disposition of the call (on success or failure),
-	*  pass the $aResults param.
-	* The variable will be populated with data about the request and response:
-	*   success
-	*     (bool) true on success, false on error
-	*   error
-	*     (string) error message, same as returned by httpError()
-	*   curl_errno
-	*     (int) cURL error number
-	*   http_status
-	*     (int) HTTP status code
-	*   content
-	*     string) response content body
-	*   headers
-	*     (string) response headers
-	*     includes headers from all responses, in cases of redirection
-	*   content_type
-	*     (string) response content MIME type
-	*   time
-	*     (float) elapsed request time in seconds
-	*   original_url
-	*     (string) URL originally requested
-	*   final_url
-	*     (string) URL actually returned
-	*     may differ from original_url, in cases of redirection
-	*   redirect_count
-	*     (int) number of redirects followed between original URL and actual URL
-	*   http_method
-	*     (string) request HTTP method, usually "GET" or "POST"
-	*   request_headers
-	*     (string) request headers sent (from final call, in cases of redirection)
-	*   post_data
-	*     (mixed) post data sent in original request
-	*
-	* @param array $aParams call-time call parameters
-	* @param array-ref &$aResults variable is populated with data about the call
-	* @return string response content; or false on failure; or true if 'download' parameter is set
-	* @throws \Useful\Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
-	*/
+	 * Execute an HTTP request and return response content
+	 *
+	 * Call is executed based on call parameters passed in $aParams, using session defaults
+	 *  for parameters that are not specified.
+	 *
+	 * Common call-time call parameters:
+	 *   * url
+	 *   * headers
+	 *   * post
+	 *   * type
+	 *
+	 * See docs for a reference of all available call parameters.
+	 *
+	 * The function will return the response content as a string, unless the 'download' parameter
+	 *  is in use.
+	 *
+	 * On a communication failure or HTTP error, the function will return false.
+	 * Call httpError() to get a text description of the error.
+	 *
+	 * To always return response content, even when the server returns an error HTTP status code,
+	 *  use the 'ignore_failure' call parameter.
+	 *
+	 * To gather detailed information about the disposition of the call (on success or failure),
+	 *  pass the $aResults param.
+	 * The variable will be populated with data about the request and response:
+	 *   success
+	 *     (bool) true on success, false on error
+	 *   error
+	 *     (string) error message, same as returned by httpError()
+	 *   curl_errno
+	 *     (int) cURL error number
+	 *   http_status
+	 *     (int) HTTP status code
+	 *   content
+	 *     string) response content body
+	 *   headers
+	 *     (string) response headers
+	 *     includes headers from all responses, in cases of redirection
+	 *   content_type
+	 *     (string) response content MIME type
+	 *   time
+	 *     (float) elapsed request time in seconds
+	 *   original_url
+	 *     (string) URL originally requested
+	 *   final_url
+	 *     (string) URL actually returned
+	 *     may differ from original_url, in cases of redirection
+	 *   redirect_count
+	 *     (int) number of redirects followed between original URL and actual URL
+	 *   http_method
+	 *     (string) request HTTP method, usually "GET" or "POST"
+	 *   request_headers
+	 *     (string) request headers sent (from final call, in cases of redirection)
+	 *   post_data
+	 *     (mixed) post data sent in original request
+	 *
+	 * @param array $aParams call-time call parameters
+	 * @param array-ref &$aResults variable is populated with data about the call
+	 * @return string response content; or false on failure; or true if 'download' parameter is set
+	 * @throws \Useful\Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
+	 */
 	public function call($aParams, &$aResults = null)
 	{
 		// Finalize call data
@@ -698,25 +702,25 @@ class HttpSession
 	}
 
 	/**
-	* Perform a sequence of HTTP requests
-	*
-	* Execute a series of HTTP requests.
-	*
-	* Each element in the call data array causes an HTTP request to be made, using the element
-	*  value as an array of call parameters, exactly as per call().
-	* Requests are executed one at a time, in array order.
-	* The result data array is populated in the same order, and using the same key as the call
-	*  data element.
-	*
-	* If a request fails (call() returns false) then the sequence is stopped, no further requests
-	*  are made.
-	*
-	* @param array $aCallData sequence of calls to execute. Each element is an array of call-time
-	*  call parameters
-	* @param array-ref &$aResultData variable is populated with call results. Each element is an
-	*  array of call results, per $aResults param from call()
-	* @return bool true on success (all calls succeeded), false on failure
-	*/
+	 * Perform a sequence of HTTP requests
+	 *
+	 * Execute a series of HTTP requests.
+	 *
+	 * Each element in the call data array causes an HTTP request to be made, using the element
+	 *  value as an array of call parameters, exactly as per call().
+	 * Requests are executed one at a time, in array order.
+	 * The result data array is populated in the same order, and using the same key as the call
+	 *  data element.
+	 *
+	 * If a request fails (call() returns false) then the sequence is stopped, no further requests
+	 *  are made.
+	 *
+	 * @param array $aCallData sequence of calls to execute. Each element is an array of call-time
+	 *  call parameters
+	 * @param array-ref &$aResultData variable is populated with call results. Each element is an
+	 *  array of call results, per $aResults param from call()
+	 * @return bool true on success (all calls succeeded), false on failure
+	 */
 	public function sequence($aCallData, &$aResultData = null)
 	{
 		$aResultData = array();
@@ -731,11 +735,11 @@ class HttpSession
 	}
 
 	/**
-	* Return description of HTTP error from most recent call
-	*
-	* @return string http error description, or null if there was no error during the most recent
-	*  call
-	*/
+	 * Return description of HTTP error from most recent call
+	 *
+	 * @return string http error description, or null if there was no error during the most recent
+	 *  call
+	 */
 	public function httpError()
 	{
 		return $this->sHttpError;
@@ -820,12 +824,12 @@ class HttpSession
 	);
 
 	/**
-	* Normalize call data parameters
-	*
-	* Internal use only, do not call directly.
-	*
-	* @internal
-	*/
+	 * Normalize call data parameters
+	 *
+	 * Internal use only, do not call directly.
+	 *
+	 * @internal
+	 */
 	public static function prepParams($aNew, $aFinal)
 	{
 		if ($aNew) {
@@ -953,12 +957,12 @@ class HttpSession
 	}
 
 	/**
-	* Convert data array to query string
-	*
-	* Internal use only, do not call directly.
-	*
-	* @internal
-	*/
+	 * Convert data array to query string
+	 *
+	 * Internal use only, do not call directly.
+	 *
+	 * @internal
+	 */
 	public static function queryToString($mValue, $aExtraData)
 	{
 		$aQueryData = self::queryToArray($mValue, $aExtraData);
@@ -985,12 +989,12 @@ class HttpSession
 	}
 
 	/**
-	* Convert query string to data array
-	*
-	* Internal use only, do not call directly.
-	*
-	* @internal
-	*/
+	 * Convert query string to data array
+	 *
+	 * Internal use only, do not call directly.
+	 *
+	 * @internal
+	 */
 	public static function queryToArray($mValue, $aExtraData)
 	{
 		$aQueryData = array();
@@ -1054,12 +1058,12 @@ class HttpSession
 	}
 
 	/**
-	* Handle cURL requests to read data while uploading file
-	*
-	* Internal use only, do not call directly.
-	*
-	* @internal
-	*/
+	 * Handle cURL requests to read data while uploading file
+	 *
+	 * Internal use only, do not call directly.
+	 *
+	 * @internal
+	 */
 	public static function _curlRead($rCurl, $rFile, $iMaxBytes)
 	{
 		if (feof($rFile))
@@ -1077,11 +1081,11 @@ class HttpSession
 	protected $xDownloadCallback;
 
 	/**
-	* Internal use only, do not call directly.
-	* Handle cURL requests to write data while downloading file
-	*
-	* @internal
-	*/
+	 * Internal use only, do not call directly.
+	 * Handle cURL requests to write data while downloading file
+	 *
+	 * @internal
+	 */
 	public function _curlWrite($rCurl, $sContent)
 	{
 		$xWrite = $this->xDownloadCallback;
@@ -1091,10 +1095,10 @@ class HttpSession
 	}
 
 	/**
-	* Internal use only, do not call directly. Destroy object
-	*
-	* @internal
-	*/
+	 * Internal use only, do not call directly. Destroy object
+	 *
+	 * @internal
+	 */
 	public function __destruct()
 	{
 		if ($this->rCurl)

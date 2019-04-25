@@ -1,10 +1,11 @@
 <?php
 /**
-* Work with date/time values
-*
-* @link https://github.com/morvren-achronos/useful
-* @copyright Morvren-Achronos 2019, licensed under Apache 2.0
-*/
+ * \Useful\Date class
+ *
+ * @link https://github.com/morvren-achronos/useful
+ * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
+ * @package Useful
+ */
 
 /*==NAMESPACE*/
 namespace Useful;
@@ -13,68 +14,71 @@ if (!class_exists('Useful\\Exception', false)) {
 }
 /*NAMESPACE==*/
 
+/**
+ * Work with date/time values
+ */
 class Date
 {
 	//////////////////////////////
 	// Public static
 
 	/**
-	* Ensure given date/time value is a Date object
-	*
-	* If value is already a Date object, the same object is returned.
-	* Otherwise a new Date object is returned.
-	*
-	* Use this method if the value may already be a Date object, and don't need to create
-	* a separate object if it is.
-	*
-	* @param mixed $mDate date/time value in any acceptable format
-	* @return Date date/time object
-	* @throws \Useful\Exception
-	*/
+	 * Ensure given date/time value is a Date object
+	 *
+	 * If value is already a Date object, the same object is returned.
+	 * Otherwise a new Date object is returned.
+	 *
+	 * Use this method if the value may already be a Date object, and don't need to create
+	 * a separate object if it is.
+	 *
+	 * @param mixed $mDate date/time value in any acceptable format
+	 * @return Date date/time object
+	 * @throws \Useful\Exception
+	 */
 	public static function obj($mDate)
 	{
 		return ($mDate instanceof self) ? $mDate : new self($mDate);
 	}
 
 	/**
-	* Create date/time object
-	*
-	* This is an alias for calling constructor:
-	*   $oDate = new \Useful\Date($mDate)
-	* Useful to allow method chaining in older versions of PHP.
-	*
-	* See __construct for more information.
-	*
-	* @param mixed $mDate date/time value
-	* @param string $sFormat date format specifier
-	* @param mixed $mTimezone timezone
-	* @return Date new date/time object
-	* @throws \Useful\Exception
-	*/
+	 * Create date/time object
+	 *
+	 * This is an alias for calling constructor:
+	 *   $oDate = new \Useful\Date($mDate)
+	 * Useful to allow method chaining in older versions of PHP.
+	 *
+	 * See __construct for more information.
+	 *
+	 * @param mixed $mDate date/time value
+	 * @param string $sFormat date format specifier
+	 * @param mixed $mTimezone timezone
+	 * @return Date new date/time object
+	 * @throws \Useful\Exception
+	 */
 	public function create($mDate, $sFormat = null, $mTimezone = null)
 	{
 		return new self($mDate, $sFormat, $mTimezone);
 	}
 
 	/**
-	* Create a date/time object from date parts
-	*
-	* @param int $iYear year part
-	* @param int $iMonth month part (1 to 12)
-	* @param int $iDay day of month part (1 to 31)
-	* @param int $iHour hour part (0 to 23)
-	* @param int $iMinute minute part (0 to 60)
-	* @param int $iSecond second part (0 to 60)
-	* @param mixed $mTimezone timezone:
-	*   null
-	*     use PHP default timezone
-	*   string
-	*     timezone name
-	*   \DateTimeZone
-	*     object of PHP builtin class DateTimeZone
-	* @return Date date/time object
-	* @throws \Useful\Exception
-	*/
+	 * Create a date/time object from date parts
+	 *
+	 * @param int $iYear year part
+	 * @param int $iMonth month part (1 to 12)
+	 * @param int $iDay day of month part (1 to 31)
+	 * @param int $iHour hour part (0 to 23)
+	 * @param int $iMinute minute part (0 to 60)
+	 * @param int $iSecond second part (0 to 60)
+	 * @param mixed $mTimezone timezone:
+	 *   null
+	 *     use PHP default timezone
+	 *   string
+	 *     timezone name
+	 *   \DateTimeZone
+	 *     object of PHP builtin class DateTimeZone
+	 * @return Date date/time object
+	 * @throws \Useful\Exception
+	 */
 	public static function createFromParts(
 		$iYear, $iMonth = 1, $iDay = 1, $iHour = 0, $iMinute = 0, $iSecond = 0, $mTimezone = null
 	)
@@ -88,84 +92,84 @@ class Date
 	}
 
 	/**
-	* Return a formatted date/time string for a given value
-	*
-	* Format a date/time value as a string, using provided date format specifier.
-	*
-	* @param mixed $mDate date/time value in any acceptable format
-	* @param string $sFormat date/time format
-	*   can be a date format specifier string per php date() function;
-	*   or can be a format mnemonic name
-	* @return string formatted date/time value
-	* @throws \Useful\Exception
-	*/
+	 * Return a formatted date/time string for a given value
+	 *
+	 * Format a date/time value as a string, using provided date format specifier.
+	 *
+	 * @param mixed $mDate date/time value in any acceptable format
+	 * @param string $sFormat date/time format
+	 *   can be a date format specifier string per php date() function;
+	 *   or can be a format mnemonic name
+	 * @return string formatted date/time value
+	 * @throws \Useful\Exception
+	 */
 	public static function valueFormat($mDate, $sFormat)
 	{
 		return self::obj($mDate)->format($sFormat);
 	}
 
 	/**
-	* Compare two date values
-	*
-	* @param mixed $mDateOne a date/time value in any acceptable format
-	* @param mixed $mDateTwo a second date/time value in any acceptable format
-	* @return
-	*   (int) 1 if date1 is later than date2
-	*   (int) -1 if date1 is earlier than date2
-	*   (int) 0 if date1 and date2 represent the same time
-	*   false if either date is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Compare two date values
+	 *
+	 * @param mixed $mDateOne a date/time value in any acceptable format
+	 * @param mixed $mDateTwo a second date/time value in any acceptable format
+	 * @return
+	 *   (int) 1 if date1 is later than date2
+	 *   (int) -1 if date1 is earlier than date2
+	 *   (int) 0 if date1 and date2 represent the same time
+	 *   false if either date is invalid
+	 * @throws \Useful\Exception
+	 */
 	public static function valueCompare($mDateOne, $mDateTwo)
 	{
 		return self::obj($mDateOne)->compare($mDateTwo);
 	}
 
 	/**
-	* Check whether date value falls within a date range
-	*
-	* @param mixed $mCheckDate a date/time value in any acceptable format
-	* @param mixed $mStartDate range start date/time value in any acceptable format
-	* @param mixed $mEndDate range end date/time value in any acceptable format
-	* @param bool $bInclusive control behaviour if check date is exactly at the start or end value:
-	*   true return true if check date is exactly at start or end date
-	*   false return false if check date is exactly at start or end date
-	* @return bool
-	*   true if check date falls within date range
-	*   0 if check date falls outside of date range
-	*   false if any date is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Check whether date value falls within a date range
+	 *
+	 * @param mixed $mCheckDate a date/time value in any acceptable format
+	 * @param mixed $mStartDate range start date/time value in any acceptable format
+	 * @param mixed $mEndDate range end date/time value in any acceptable format
+	 * @param bool $bInclusive control behaviour if check date is exactly at the start or end value:
+	 *   true return true if check date is exactly at start or end date
+	 *   false return false if check date is exactly at start or end date
+	 * @return bool
+	 *   true if check date falls within date range
+	 *   0 if check date falls outside of date range
+	 *   false if any date is invalid
+	 * @throws \Useful\Exception
+	 */
 	public static function valueBetween($mCheckDate, $mStartDate, $mEndDate, $bInclusive = true)
 	{
 		return self::obj($mCheckDate)->between($mStartDate, $mEndDate, $bInclusive);
 	}
 
 	/**
-	* Iterate a range of times between two dates
-	*
-	* Return an array of dates representing steps between the start date/time and end date/time,
-	* changing each step date by the provided time interval.
-	*
-	* @param mixed $mStartDate starting date/time value in any acceptable format
-	* @param mixed $mEndDate ending date/time value in any acceptable format
-	* @param string $sStepInterval date time interval to adjust date by on each step
-	* @return
-	*   (array) set of Date objects representing steps between start and end dates
-	*   false if either date is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Iterate a range of times between two dates
+	 *
+	 * Return an array of dates representing steps between the start date/time and end date/time,
+	 * changing each step date by the provided time interval.
+	 *
+	 * @param mixed $mStartDate starting date/time value in any acceptable format
+	 * @param mixed $mEndDate ending date/time value in any acceptable format
+	 * @param string $sStepInterval date time interval to adjust date by on each step
+	 * @return
+	 *   (array) set of Date objects representing steps between start and end dates
+	 *   false if either date is invalid
+	 * @throws \Useful\Exception
+	 */
 	public static function valueRange($mStartDate, $mEndDate, $sStepInterval = '+1 day')
 	{
 		return self::obj($mStartDate)->range($mEndDate, $sStepInterval);
 	}
 
 	/**
-	* Check whether given calendar year is a leap year
-	*
-	* @param int $iYear year to check (default is current year)
-	* @return bool true if year is a leap year, false if not
-	*/
+	 * Check whether given calendar year is a leap year
+	 *
+	 * @param int $iYear year to check (default is current year)
+	 * @return bool true if year is a leap year, false if not
+	 */
 	public static function intIsLeapYear($iYear = null)
 	{
 		$oDate = new self(($iYear === null) ? 'now' : sprintf('%04d-01-01', $iYear));
@@ -173,11 +177,11 @@ class Date
 	}
 
 	/**
-	* Return number of days in given calendar year
-	*
-	* @param int $iYear year to check (default is current year)
-	* @return int number of days in year
-	*/
+	 * Return number of days in given calendar year
+	 *
+	 * @param int $iYear year to check (default is current year)
+	 * @return int number of days in year
+	 */
 	public static function intDaysInYear($iYear = null)
 	{
 		$oDate = new self(($iYear === null) ? 'now' : sprintf('%04d-01-01', $iYear));
@@ -185,12 +189,12 @@ class Date
 	}
 
 	/**
-	* Return number of days in given calendar month
-	*
-	* @param int $iMonth month to check (default is current month)
-	* @param int $iYear year to check (default is current year)
-	* @return int number of days in month
-	*/
+	 * Return number of days in given calendar month
+	 *
+	 * @param int $iMonth month to check (default is current month)
+	 * @param int $iYear year to check (default is current year)
+	 * @return int number of days in month
+	 */
 	public static function intDaysInMonth($iMonth = null, $iYear = null)
 	{
 		$oNow = new self('now');
@@ -203,12 +207,12 @@ class Date
 	}
 
 	/**
-	* Set a mnemonic format label
-	*
-	* @param string $sLabel mnemonic label: 'date', 'display_date', etc.
-	* @param string $sFormat date format specifier, per php date() function
-	* @return bool true
-	*/
+	 * Set a mnemonic format label
+	 *
+	 * @param string $sLabel mnemonic label: 'date', 'display_date', etc.
+	 * @param string $sFormat date format specifier, per php date() function
+	 * @return bool true
+	 */
 	public static function registerFormatLabel($sLabel, $sFormat)
 	{
 		self::$aFormatLabels[$sLabel] = $sFormat;
@@ -216,10 +220,10 @@ class Date
 	}
 
 	/**
-	* Return all defined mnemonic format labels
-	*
-	* @return array mnemonic labels and corresponding datre format specifiers
-	*/
+	 * Return all defined mnemonic format labels
+	 *
+	 * @return array mnemonic labels and corresponding datre format specifiers
+	 */
 	public static function getRegisteredFormatLabels()
 	{
 		return self::$aFormatLabels;
@@ -230,30 +234,30 @@ class Date
 	// Public - main
 
 	/**
-	* Create a date/time object
-	*
-	* @param mixed $mDate date/time value
-	*   string
-	*     formatted date, capable of being parsed by php strtotime()
-	*   int or float
-	*     unix timestamp
-	*   Useful\Date
-	*     copy date value from another Date object
-	*   \DateTime
-	*     copy date value from an object of php builtin class DateTime
-	*   null
-	*     current system date/time
-	* @param string $sFormat date format specifier
-	*   force string date value to be parsed using this format specifier, per php date() function
-	* @param mixed $mTimezone timezone
-	*   null
-	*     use php default timezone
-	*   string
-	*     timezone name
-	*   \DateTimeZone
-	*     object of php builtin class DateTimeZone
-	* @throws \Useful\Exception
-	*/
+	 * Create a date/time object
+	 *
+	 * @param mixed $mDate date/time value
+	 *   string
+	 *     formatted date, capable of being parsed by php strtotime()
+	 *   int or float
+	 *     unix timestamp
+	 *   Useful\Date
+	 *     copy date value from another Date object
+	 *   \DateTime
+	 *     copy date value from an object of php builtin class DateTime
+	 *   null
+	 *     current system date/time
+	 * @param string $sFormat date format specifier
+	 *   force string date value to be parsed using this format specifier, per php date() function
+	 * @param mixed $mTimezone timezone
+	 *   null
+	 *     use php default timezone
+	 *   string
+	 *     timezone name
+	 *   \DateTimeZone
+	 *     object of php builtin class DateTimeZone
+	 * @throws \Useful\Exception
+	 */
 	public function __construct($mDate = null, $sFormat = null, $mTimezone = null)
 	{
 		$this->oTime = $mDate ? $this->_time($mDate, $sFormat) : new \DateTime();
@@ -266,14 +270,14 @@ class Date
 	// Public - compare/interval
 
 	/**
-	* Return a new date/time relative to this object's date/time
-	*
-	* Create a date/time object, offset from this object's date/time by a time interval
-	*
-	* @param string $sInterval time interval in format accepted by strtotime
-	* @return Date new date/time instance
-	* @throws \Useful\Exception
-	*/
+	 * Return a new date/time relative to this object's date/time
+	 *
+	 * Create a date/time object, offset from this object's date/time by a time interval
+	 *
+	 * @param string $sInterval time interval in format accepted by strtotime
+	 * @return Date new date/time instance
+	 * @throws \Useful\Exception
+	 */
 	public function relative($sInterval)
 	{
 		$oDate = new Date($this);
@@ -282,37 +286,37 @@ class Date
 	}
 
 	/**
-	* Return a new date/time aligned to a period boundary
-	*
-	* Create a date/time object, based on this object's date/time aligned to match a period
-	* boundary.
-	*
-	* @param string $sUnit unit type of time period:
-	*   second
-	*     Every N seconds part the minute (1 to 30)
-	*   minute
-	*     Every N minutes past the hour (1 to 30)
-	*   hour
-	*     Every N hours past midnight (1 to 12)
-	*   day
-	*     Every N days in the calendar month (1 to 16)
-	*   week
-	*     Every N weeks in the calendar year (1 to 26)
-	*   month
-	*     Every N months in the calendar year (1 to 6)
-	*   year
-	*     Every N years (1+)
-	* @param int $iLength length of time period in units
-	* @param string $sWhich control which boundary date to calculate:
-	*   earlier
-	*     align to nearest boundary that is later than (or equal to) the origin date
-	*   later
-	*     align to nearest boundary that is earlier than (or equal to) the origin date
-	*   round
-	*     align to nearest boundary (earlier or later, whichever is closer)
-	* @return Date new date/time instance
-	* @throws \Useful\Exception
-	*/
+	 * Return a new date/time aligned to a period boundary
+	 *
+	 * Create a date/time object, based on this object's date/time aligned to match a period
+	 * boundary.
+	 *
+	 * @param string $sUnit unit type of time period:
+	 *   second
+	 *     Every N seconds part the minute (1 to 30)
+	 *   minute
+	 *     Every N minutes past the hour (1 to 30)
+	 *   hour
+	 *     Every N hours past midnight (1 to 12)
+	 *   day
+	 *     Every N days in the calendar month (1 to 16)
+	 *   week
+	 *     Every N weeks in the calendar year (1 to 26)
+	 *   month
+	 *     Every N months in the calendar year (1 to 6)
+	 *   year
+	 *     Every N years (1+)
+	 * @param int $iLength length of time period in units
+	 * @param string $sWhich control which boundary date to calculate:
+	 *   earlier
+	 *     align to nearest boundary that is later than (or equal to) the origin date
+	 *   later
+	 *     align to nearest boundary that is earlier than (or equal to) the origin date
+	 *   round
+	 *     align to nearest boundary (earlier or later, whichever is closer)
+	 * @return Date new date/time instance
+	 * @throws \Useful\Exception
+	 */
 	public function align($sUnit, $iLength = 1, $sWhich = 'earlier')
 	{
 		$oDate = new Date($this);
@@ -321,19 +325,19 @@ class Date
 	}
 
 	/**
-	* Return a new date/time instance with same value but a different time zone.
-	*
-	* Create a date/time object that represents the same moment in time as this object, but in a
-	* different time zone. (See {@link changeTimezone}.)
-	*
-	* @param mixed $mTimezone timezone
-	*   string
-	*     timezone name
-	*   \DateTimeZone
-	*     object of php builtin class DateTimeZone
-	* @return Date new date/time instance
-	* @throws \Useful\Exception
-	*/
+	 * Return a new date/time instance with same value but a different time zone.
+	 *
+	 * Create a date/time object that represents the same moment in time as this object, but in a
+	 * different time zone. (See {@link changeTimezone}.)
+	 *
+	 * @param mixed $mTimezone timezone
+	 *   string
+	 *     timezone name
+	 *   \DateTimeZone
+	 *     object of php builtin class DateTimeZone
+	 * @return Date new date/time instance
+	 * @throws \Useful\Exception
+	 */
 	public function relocate($mTimezone)
 	{
 		$oDate = new Date($this);
@@ -342,18 +346,18 @@ class Date
 	}
 
 	/**
-	* Compare this date to another date
-	*
-	* Compare this date/time to another date value and determine which one is later.
-	*
-	* @param mixed $mDate comparison date/time value in any acceptable format
-	* @return int
-	*   (int) 1 if this date is later than argument date
-	*   (int) -1 if this date is earlier than argument date
-	*   (int) 0 if this date and argument date represent the same time
-	*   false if either date is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Compare this date to another date
+	 *
+	 * Compare this date/time to another date value and determine which one is later.
+	 *
+	 * @param mixed $mDate comparison date/time value in any acceptable format
+	 * @return int
+	 *   (int) 1 if this date is later than argument date
+	 *   (int) -1 if this date is earlier than argument date
+	 *   (int) 0 if this date and argument date represent the same time
+	 *   false if either date is invalid
+	 * @throws \Useful\Exception
+	 */
 	public function compare($mDate)
 	{
 		// Get argument date
@@ -379,21 +383,21 @@ class Date
 	}
 
 	/**
-	* Check whether this date is equal to/earlier than another date
-	*
-	* @param mixed $mDate comparison date/time value in any acceptable format
-	* @param bool $bInclusive what to return if this date is exactly equal to argument date:
-	*   true
-	*     "on or before"
-	*     return true if this date is exactly at argument date
-	*   false
-	*     "before only"
-	*     return false if this date is exactly at argument date
-	* @return bool
-	*   true if this date is on or before argument date
-	*   false if this date is after argument date
-	* @throws \Useful\Exception
-	*/
+	 * Check whether this date is equal to/earlier than another date
+	 *
+	 * @param mixed $mDate comparison date/time value in any acceptable format
+	 * @param bool $bInclusive what to return if this date is exactly equal to argument date:
+	 *   true
+	 *     "on or before"
+	 *     return true if this date is exactly at argument date
+	 *   false
+	 *     "before only"
+	 *     return false if this date is exactly at argument date
+	 * @return bool
+	 *   true if this date is on or before argument date
+	 *   false if this date is after argument date
+	 * @throws \Useful\Exception
+	 */
 	public function before($mDate, $bInclusive = true)
 	{
 		$iCompare = $this->compare($mDate);
@@ -405,21 +409,21 @@ class Date
 	}
 
 	/**
-	* Check whether this date is equal to/later than another date
-	*
-	* @param mixed $mDate comparison date/time value in any acceptable format
-	* @param bool $bInclusive what to return if this date is exactly equal to argument date:
-	*   true
-	*     "on or after"
-	*     return true if this date is exactly equal to argument date
-	*   false
-	*     "after only"
-	*     return false if this date is exactly equal to argument date
-	* @return bool
-	*   true if this date is on or after argument date
-	*   false if this date is before argument date
-	* @throws \Useful\Exception
-	*/
+	 * Check whether this date is equal to/later than another date
+	 *
+	 * @param mixed $mDate comparison date/time value in any acceptable format
+	 * @param bool $bInclusive what to return if this date is exactly equal to argument date:
+	 *   true
+	 *     "on or after"
+	 *     return true if this date is exactly equal to argument date
+	 *   false
+	 *     "after only"
+	 *     return false if this date is exactly equal to argument date
+	 * @return bool
+	 *   true if this date is on or after argument date
+	 *   false if this date is before argument date
+	 * @throws \Useful\Exception
+	 */
 	public function after($mDate, $bInclusive = true)
 	{
 		$iCompare = $this->compare($mDate);
@@ -431,20 +435,20 @@ class Date
 	}
 
 	/**
-	* Check whether this date falls within a given date range
-	*
-	* @param mixed $mStartDate range start date/time value in any acceptable format
-	* @param mixed $mEndDate range end date/time value in any acceptable format
-	* @param bool $bInclusive what to return if this is exactly equal to start or end date:
-	*   true
-	*     return true if this date is exactly equal to start or end date
-	*   false
-	*     return false if this date is exactly equal to start or end date
-	* @return bool
-	*   true if this date falls within date range
-	*   false if this date falls outside of date range
-	* @throws \Useful\Exception
-	*/
+	 * Check whether this date falls within a given date range
+	 *
+	 * @param mixed $mStartDate range start date/time value in any acceptable format
+	 * @param mixed $mEndDate range end date/time value in any acceptable format
+	 * @param bool $bInclusive what to return if this is exactly equal to start or end date:
+	 *   true
+	 *     return true if this date is exactly equal to start or end date
+	 *   false
+	 *     return false if this date is exactly equal to start or end date
+	 * @return bool
+	 *   true if this date falls within date range
+	 *   false if this date falls outside of date range
+	 * @throws \Useful\Exception
+	 */
 	public function between($mStartDate, $mEndDate, $bInclusive = true)
 	{
 		// Compare to start date
@@ -461,118 +465,118 @@ class Date
 	}
 
 	/**
-	* Return the time interval between another date and this date
-	*
-	* Calculate difference (interval) between two date/time values.
-	*
-	* If this date is later than argument date, interval is positive.
-	* If this date is earlier than argument date, interval is negative.
-	*
-	* If this date is exactly equal to argument date, interval is empty.
-	*
-	* Interval value can be returned in several different ways ($sReturnMode argument):
-	*   relative
-	*     Returns an relative date string, as accepted by new Date() and PHP builtin
-	*      strtotime().
-	*     This is the default return mode.
-	*     Empty interval (equal dates) is returned as empty string.
-	*     Examples:
-	*       +2 months +1 day +3 hours
-	*       -15 minutes -30 seconds
-	*   human
-	*     Returns a human-readable relative date string.
-	*     Empty interval (equal dates) is returned as "None".
-	*     Examples:
-	*       2 months, 1 day, 3 hours
-	*       -15 minutes, 30 seconds
-	*   interval
-	*     Returns an interval string as accepted by PHP builtin DateInterval.
-	*     Empty interval (equal dates) is returned as empty string.
-	*     Interval is always expressed as positive, call {@link before} to check for negative
-	*      interval.
-	*     Examples:
-	*       P2M1DT3H
-	*       PT15M30S
-	*   parts
-	*     Return an array of dateparts that comprise the interval.
-	*     Empty interval (equal dates) is returned as empty array.
-	*     Part values are always positive, use array key 'compare' to check for negative interval.
-	*     Part values of zero are not included in the array
-	*     Examples:
-	*       array( 'months' => 2, 'days' => 1, 'hours' => 3, 'compare' => 1 )
-	*       array( 'minutes' => 15, 'seconds' => 30, 'compare' => -1 )
-	*   years
-	*   months
-	*   weeks
-	*   days
-	*   hours
-	*   minutes
-	*   seconds
-	*     Calculate difference measured in given datepart, counting whole units only.
-	*     Total is always positive, call {@link before} to check for negative interval.
-	*   totals
-	*     Return array of datepart totals for all dateparts.
-	*     Total values are always positive, use array key 'compare' to check for negative interval
-	*     Example:
-	*       array(
-	*         'years' => 0,
-	*         'months' => 2,
-	*         'days' => 62,
-	*         'hours' => 1491,
-	*         'minutes' => 89460,
-	*         'seconds' => 5367600,
-	*         'compare' => 1
-	*       )
-	*   all
-	*     Return all of the above in an array:
-	*     Example:
-	*       array(
-	*         'compare' => 1,
-	*         'relative' => '+2 months +1 day +3 hours',
-	*         'human' => '2 months, 1 day, 3 hours',
-	*         'interval' => 'P2M1DT3H',
-	*         'parts' => array( 'months' => 2, 'days' => 1, 'hours' => 3 ),
-	*         'totals' => array(
-	*           'years' => 0,
-	*           'months' => 2,
-	*           'days' => 62,
-	*           'hours' => 1491,
-	*           'minutes' => 89460,
-	*           'seconds' => 5367600,
-	*           'compare' => 1
-	*         )
-	*       )
-	*     Return array containing parts, totals, relative and interval formats
-	*     Use array key 'compare' to check for negative interval
-	*
-	* Note on parts vs totals:
-	*   * Each element in parts represents a fraction of the interval.
-	*     All of the parts "added together" equal the interval.
-	*   * Each element in totals represents the entire interval.
-	*     The totals are the number of date-part boundaries (of that part) crosed during the
-	*      complete interval.
-	*   * Example, for 2011-02-02 vs 2011-01-01:
-	*     * Parts: months=1, days=1
-	*     * Totals: months=1, days=32, hours=768, minutes=23040, seconds=1382400
-	*
-	* @param mixed $mDate comparison date/time value in any acceptable format
-	* @param string $sReturnMode type of difference to return. Types are:
-	*   relative
-	*   human
-	*   interval
-	*   parts
-	*   years (or y)
-	*   months (or m)
-	*   days (or d)
-	*   hours (or h)
-	*   minutes (or i)
-	*   seconds (or s)
-	*   totals
-	*   all
-	* @return mixed interval in format specified by $sReturnMode
-	*   note return may be empty string or empty array if dates are equal
-	* @throws \Useful\Exception
-	*/
+	 * Return the time interval between another date and this date
+	 *
+	 * Calculate difference (interval) between two date/time values.
+	 *
+	 * If this date is later than argument date, interval is positive.
+	 * If this date is earlier than argument date, interval is negative.
+	 *
+	 * If this date is exactly equal to argument date, interval is empty.
+	 *
+	 * Interval value can be returned in several different ways ($sReturnMode argument):
+	 *   relative
+	 *     Returns an relative date string, as accepted by new Date() and PHP builtin
+	 *      strtotime().
+	 *     This is the default return mode.
+	 *     Empty interval (equal dates) is returned as empty string.
+	 *     Examples:
+	 *       +2 months +1 day +3 hours
+	 *       -15 minutes -30 seconds
+	 *   human
+	 *     Returns a human-readable relative date string.
+	 *     Empty interval (equal dates) is returned as "None".
+	 *     Examples:
+	 *       2 months, 1 day, 3 hours
+	 *       -15 minutes, 30 seconds
+	 *   interval
+	 *     Returns an interval string as accepted by PHP builtin DateInterval.
+	 *     Empty interval (equal dates) is returned as empty string.
+	 *     Interval is always expressed as positive, call {@link before} to check for negative
+	 *      interval.
+	 *     Examples:
+	 *       P2M1DT3H
+	 *       PT15M30S
+	 *   parts
+	 *     Return an array of dateparts that comprise the interval.
+	 *     Empty interval (equal dates) is returned as empty array.
+	 *     Part values are always positive, use array key 'compare' to check for negative interval.
+	 *     Part values of zero are not included in the array
+	 *     Examples:
+	 *       array( 'months' => 2, 'days' => 1, 'hours' => 3, 'compare' => 1 )
+	 *       array( 'minutes' => 15, 'seconds' => 30, 'compare' => -1 )
+	 *   years
+	 *   months
+	 *   weeks
+	 *   days
+	 *   hours
+	 *   minutes
+	 *   seconds
+	 *     Calculate difference measured in given datepart, counting whole units only.
+	 *     Total is always positive, call {@link before} to check for negative interval.
+	 *   totals
+	 *     Return array of datepart totals for all dateparts.
+	 *     Total values are always positive, use array key 'compare' to check for negative interval
+	 *     Example:
+	 *       array(
+	 *         'years' => 0,
+	 *         'months' => 2,
+	 *         'days' => 62,
+	 *         'hours' => 1491,
+	 *         'minutes' => 89460,
+	 *         'seconds' => 5367600,
+	 *         'compare' => 1
+	 *       )
+	 *   all
+	 *     Return all of the above in an array:
+	 *     Example:
+	 *       array(
+	 *         'compare' => 1,
+	 *         'relative' => '+2 months +1 day +3 hours',
+	 *         'human' => '2 months, 1 day, 3 hours',
+	 *         'interval' => 'P2M1DT3H',
+	 *         'parts' => array( 'months' => 2, 'days' => 1, 'hours' => 3 ),
+	 *         'totals' => array(
+	 *           'years' => 0,
+	 *           'months' => 2,
+	 *           'days' => 62,
+	 *           'hours' => 1491,
+	 *           'minutes' => 89460,
+	 *           'seconds' => 5367600,
+	 *           'compare' => 1
+	 *         )
+	 *       )
+	 *     Return array containing parts, totals, relative and interval formats
+	 *     Use array key 'compare' to check for negative interval
+	 *
+	 * Note on parts vs totals:
+	 *   * Each element in parts represents a fraction of the interval.
+	 *     All of the parts "added together" equal the interval.
+	 *   * Each element in totals represents the entire interval.
+	 *     The totals are the number of date-part boundaries (of that part) crosed during the
+	 *      complete interval.
+	 *   * Example, for 2011-02-02 vs 2011-01-01:
+	 *     * Parts: months=1, days=1
+	 *     * Totals: months=1, days=32, hours=768, minutes=23040, seconds=1382400
+	 *
+	 * @param mixed $mDate comparison date/time value in any acceptable format
+	 * @param string $sReturnMode type of difference to return. Types are:
+	 *   relative
+	 *   human
+	 *   interval
+	 *   parts
+	 *   years (or y)
+	 *   months (or m)
+	 *   days (or d)
+	 *   hours (or h)
+	 *   minutes (or i)
+	 *   seconds (or s)
+	 *   totals
+	 *   all
+	 * @return mixed interval in format specified by $sReturnMode
+	 *   note return may be empty string or empty array if dates are equal
+	 * @throws \Useful\Exception
+	 */
 	public function difference($mDate, $sReturnMode = 'relative')
 	{
 		static $aPartData = array(
@@ -860,29 +864,29 @@ class Date
 	}
 
 	/**
-	* Iterate a range of times between this date and another date
-	*
-	* Return an array of dates representing steps between this date/time and an end date/time,
-	*  changing date value by the provided time interval at each step.
-	*
-	* Example:
-	*   $oStartDate = new Date('2012-01-01 23:00');
-	*   foreach ($oStartDate->range('2012-01-05 01:00', '+1 day') as $oDate)
-	*     echo $oDate->date()->format('Y-m-d') . "\n";
-	* Result:
-	*   2012-01-01
-	*   2012-01-02
-	*   2012-01-03
-	*   2012-01-04
-	* Doesn't print Jan 5 because the time is later than end date
-	*
-	* @param mixed $mEndDate ending date/time value in any acceptable format
-	* @param string $sStepInterval date time interval to adjust date by on each step
-	* @return
-	*   (array) set of Date objects representing steps between start and end dates
-	*   false if either date is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Iterate a range of times between this date and another date
+	 *
+	 * Return an array of dates representing steps between this date/time and an end date/time,
+	 *  changing date value by the provided time interval at each step.
+	 *
+	 * Example:
+	 *   $oStartDate = new Date('2012-01-01 23:00');
+	 *   foreach ($oStartDate->range('2012-01-05 01:00', '+1 day') as $oDate)
+	 *     echo $oDate->date()->format('Y-m-d') . "\n";
+	 * Result:
+	 *   2012-01-01
+	 *   2012-01-02
+	 *   2012-01-03
+	 *   2012-01-04
+	 * Doesn't print Jan 5 because the time is later than end date
+	 *
+	 * @param mixed $mEndDate ending date/time value in any acceptable format
+	 * @param string $sStepInterval date time interval to adjust date by on each step
+	 * @return
+	 *   (array) set of Date objects representing steps between start and end dates
+	 *   false if either date is invalid
+	 * @throws \Useful\Exception
+	 */
 	public function range($mEndDate, $sStepInterval = '+1 day')
 	{
 		// Get argument date
@@ -911,45 +915,45 @@ class Date
 	// Public - get value
 
 	/**
-	* Return formatted date and time parts
-	*
-	* @return string formatted value
-	*/
+	 * Return formatted date and time parts
+	 *
+	 * @return string formatted value
+	 */
 	public function datetime()
 	{
 		return $this->_format(self::$aFormatLabels['datetime']);
 	}
 
 	/**
-	* Return formatted date part
-	*
-	* @return string formatted date part
-	*/
+	 * Return formatted date part
+	 *
+	 * @return string formatted date part
+	 */
 	public function date()
 	{
 		return $this->_format(self::$aFormatLabels['date']);
 	}
 
 	/**
-	* Return formatted time part
-	*
-	* @return string formatted time part
-	*/
+	 * Return formatted time part
+	 *
+	 * @return string formatted time part
+	 */
 	public function time()
 	{
 		return $this->_format(self::$aFormatLabels['time']);
 	}
 
 	/**
-	* Return formatted date/time string
-	*
-	* Format date/time as a string, using provided date format specifier.
-	*
-	* @param string $sFormat date/time format
-	*   can be a date format specifier string per php date() function;
-	*   or can be a format mnemonic name
-	* @return string formatted date/time value
-	*/
+	 * Return formatted date/time string
+	 *
+	 * Format date/time as a string, using provided date format specifier.
+	 *
+	 * @param string $sFormat date/time format
+	 *   can be a date format specifier string per php date() function;
+	 *   or can be a format mnemonic name
+	 * @return string formatted date/time value
+	 */
 	public function format($sFormat)
 	{
 		return $this->_format(
@@ -960,32 +964,32 @@ class Date
 	}
 
 	/**
-	* Return Unix timestamp
-	*
-	* Get Unix timestamp.
-	* This can return a value for dates outside the typical Unix timestamp range.
-	*
-	* Unix timestamps are stored as signed integers. Possible values are limited by system integer
-	*  width.
-	* For 64-bit systems there is effectively no limit (293 billion years)
-	* For 32-bit systems, an integer (i.e. a Unix timestamp) can only represent dates in the range
-	* 	1901-12-13 20:45:54
-	* 	to
-	* 	2038-01-19 03:14:07
-	*
-	* On 64-bit systems this method will always return an integer.
-	* On 32-bit systems, for dates outside the 32-bit range this method will return a float
-	*  instead of int.
-	* Note that any external application or process that requests a Unix timestamp will not work
-	*  with this float.
-	*
-	* @return int|float
-	*   int
-	*     unix timestamp, if timestamp can be represented by this computer's integer
-	*   float
-	*     unix timestamp equivalent, if timestamp falls outside of valid 32-bit range, on 32-bit
-	*      system
-	*/
+	 * Return Unix timestamp
+	 *
+	 * Get Unix timestamp.
+	 * This can return a value for dates outside the typical Unix timestamp range.
+	 *
+	 * Unix timestamps are stored as signed integers. Possible values are limited by system integer
+	 *  width.
+	 * For 64-bit systems there is effectively no limit (293 billion years)
+	 * For 32-bit systems, an integer (i.e. a Unix timestamp) can only represent dates in the range
+	 * 	1901-12-13 20:45:54
+	 * 	to
+	 * 	2038-01-19 03:14:07
+	 *
+	 * On 64-bit systems this method will always return an integer.
+	 * On 32-bit systems, for dates outside the 32-bit range this method will return a float
+	 *  instead of int.
+	 * Note that any external application or process that requests a Unix timestamp will not work
+	 *  with this float.
+	 *
+	 * @return int|float
+	 *   int
+	 *     unix timestamp, if timestamp can be represented by this computer's integer
+	 *   float
+	 *     unix timestamp equivalent, if timestamp falls outside of valid 32-bit range, on 32-bit
+	 *      system
+	 */
 	public function unix()
 	{
 		$sTime = $this->oTime->format('U');
@@ -998,30 +1002,30 @@ class Date
 	}
 
 	/**
-	* Return array of date parts
-	*
-	* @return array parts: array(
-	*   year => (int)
-	*   month => (int) 1 to 12
-	*   month_name => (string) "January" to "December"
-	*   month_short => (string) "Jan" to "Dec"
-	*   day => (int) 1 to 31
-	*   day_ordinal => (string) "1st", "2nd", "3rd", etc.
-	*   week => (int) week number of year, per ISO-8601, 1 to 53
-	*   weekday => (int) 1 (Monday) to 7 (Sunday)
-	*   weekday_name => (string) "Monday" to "Sunday"
-	*   weekday_short => (string) "Mon" to "Sun"
-	*   //
-	*   hour => (int) 0 to 23
-	*   minute => (int) 0 to 60
-	*   second => (int) 0 to 60
-	*   //
-	*   tz_offset => (int) timezone offset to UTC in seconds, -43200 to 43200
-	*   tz_diff => (string) timezone offset to UTC in form "+HHMM"
-	*   tz_code => (string) timezone abbreviation, e.g. "PST"
-	*   tz_name => (string) timezone full name, e.g. "America/Los Angeles"
-	* ) or false if this date is invalid
-	*/
+	 * Return array of date parts
+	 *
+	 * @return array parts: array(
+	 *   year => (int)
+	 *   month => (int) 1 to 12
+	 *   month_name => (string) "January" to "December"
+	 *   month_short => (string) "Jan" to "Dec"
+	 *   day => (int) 1 to 31
+	 *   day_ordinal => (string) "1st", "2nd", "3rd", etc.
+	 *   week => (int) week number of year, per ISO-8601, 1 to 53
+	 *   weekday => (int) 1 (Monday) to 7 (Sunday)
+	 *   weekday_name => (string) "Monday" to "Sunday"
+	 *   weekday_short => (string) "Mon" to "Sun"
+	 *   //
+	 *   hour => (int) 0 to 23
+	 *   minute => (int) 0 to 60
+	 *   second => (int) 0 to 60
+	 *   //
+	 *   tz_offset => (int) timezone offset to UTC in seconds, -43200 to 43200
+	 *   tz_diff => (string) timezone offset to UTC in form "+HHMM"
+	 *   tz_code => (string) timezone abbreviation, e.g. "PST"
+	 *   tz_name => (string) timezone full name, e.g. "America/Los Angeles"
+	 * ) or false if this date is invalid
+	 */
 	public function parts()
 	{
 		$sVal = $this->_format('e T O Z a s i H D l N W jS d M F m Y');
@@ -1048,181 +1052,181 @@ class Date
 	}
 
 	/**
-	* Return year
-	*
-	* @return int part
-	*/
+	 * Return year
+	 *
+	 * @return int part
+	 */
 	public function year()
 	{
 		return $this->_formatInt('Y');
 	}
 
 	/**
-	* Return month as number, 1 to 12
-	*
-	* @return int part
-	*/
+	 * Return month as number, 1 to 12
+	 *
+	 * @return int part
+	 */
 	public function month()
 	{
 		return $this->_formatInt('m');
 	}
 
 	/**
-	* Return month as name, "January" to "December"
-	*
-	* @return string part
-	*/
+	 * Return month as name, "January" to "December"
+	 *
+	 * @return string part
+	 */
 	public function monthName()
 	{
 		return $this->_format('F');
 	}
 
 	/**
-	* Return month as abbreviation, "Jan" to "Dec"
-	*
-	* @return string part
-	*/
+	 * Return month as abbreviation, "Jan" to "Dec"
+	 *
+	 * @return string part
+	 */
 	public function monthShort()
 	{
 		return $this->_format('M');
 	}
 
 	/**
-	* Return week number within year, 1 to 53
-	*
-	* @return int part
-	*/
+	 * Return week number within year, 1 to 53
+	 *
+	 * @return int part
+	 */
 	public function week()
 	{
 		return $this->_formatInt('W');
 	}
 
 	/**
-	* Return day of week as number, 1 (for Monday) to 7 (for Sunday)
-	*
-	* @return int part
-	*/
+	 * Return day of week as number, 1 (for Monday) to 7 (for Sunday)
+	 *
+	 * @return int part
+	 */
 	public function weekday()
 	{
 		return $this->_formatInt('N');
 	}
 
 	/**
-	* Return day of week as name, "Monday" to "Sunday"
-	*
-	* @return string part
-	*/
+	 * Return day of week as name, "Monday" to "Sunday"
+	 *
+	 * @return string part
+	 */
 	public function weekdayName()
 	{
 		return $this->_format('l');
 	}
 
 	/**
-	* Return day of week as abbreviation, "Mon" to "Sun"
-	*
-	* @return string part
-	*/
+	 * Return day of week as abbreviation, "Mon" to "Sun"
+	 *
+	 * @return string part
+	 */
 	public function weekdayShort()
 	{
 		return $this->_format('D');
 	}
 
 	/**
-	* Return day of month
-	*
-	* @return int part
-	*/
+	 * Return day of month
+	 *
+	 * @return int part
+	 */
 	public function day()
 	{
 		return $this->_formatInt('d');
 	}
 
 	/**
-	* Return day of month with ordinal ("st", "nd", "rd")
-	*
-	* @return string part
-	*/
+	 * Return day of month with ordinal ("st", "nd", "rd")
+	 *
+	 * @return string part
+	 */
 	public function dayOrdinal()
 	{
 		return $this->_format('jS');
 	}
 
 	/**
-	* Return day of year (0 to 365)
-	*
-	* @return int part
-	*/
+	 * Return day of year (0 to 365)
+	 *
+	 * @return int part
+	 */
 	public function dayOfYear()
 	{
 		return $this->_formatInt('z');
 	}
 
 	/**
-	* Return hour, 0 to 23
-	*
-	* @return int part
-	*/
+	 * Return hour, 0 to 23
+	 *
+	 * @return int part
+	 */
 	public function hour()
 	{
 		return $this->_formatInt('H');
 	}
 
 	/**
-	* Return hour within meridian of day, 1 to 12
-	*
-	* @return int part
-	*/
+	 * Return hour within meridian of day, 1 to 12
+	 *
+	 * @return int part
+	 */
 	public function hour12()
 	{
 		return $this->_formatInt('h');
 	}
 
 	/**
-	* Return minute
-	*
-	* @return int part
-	*/
+	 * Return minute
+	 *
+	 * @return int part
+	 */
 	public function minute()
 	{
 		return $this->_formatInt('i');
 	}
 
 	/**
-	* Return second
-	*
-	* @return int part
-	*/
+	 * Return second
+	 *
+	 * @return int part
+	 */
 	public function second()
 	{
 		return $this->_formatInt('s');
 	}
 
 	/**
-	* Return ante-meridian or post-meridian descriptor: "am" or "pm"
-	*
-	* @return string part
-	*/
+	 * Return ante-meridian or post-meridian descriptor: "am" or "pm"
+	 *
+	 * @return string part
+	 */
 	public function meridian()
 	{
 		return $this->_format('a');
 	}
 
 	/**
-	* Return timezone
-	*
-	* @param string $sFormat how to format timezone:
-	*   code
-	*     Return shortform code of timezone, e.g. "PST" or "GMT"
-	*   name
-	*     Return longform name of timezone, e.g. "America/Los Angeles"
-	*   diff
-	*     Return difference to UTC in hours, format "+HH00" e.g. "-7000"
-	*   offset
-	*     Return difference to UTC in seconds, as int
-	*   object
-	*     Return instance of php builtin class DateTimeZone
-	* @return mixed timezone value
-	*/
+	 * Return timezone
+	 *
+	 * @param string $sFormat how to format timezone:
+	 *   code
+	 *     Return shortform code of timezone, e.g. "PST" or "GMT"
+	 *   name
+	 *     Return longform name of timezone, e.g. "America/Los Angeles"
+	 *   diff
+	 *     Return difference to UTC in hours, format "+HH00" e.g. "-7000"
+	 *   offset
+	 *     Return difference to UTC in seconds, as int
+	 *   object
+	 *     Return instance of php builtin class DateTimeZone
+	 * @return mixed timezone value
+	 */
 	public function timezone($sFormat = 'name')
 	{
 		switch ($sFormat) {
@@ -1240,24 +1244,24 @@ class Date
 	}
 
 	/**
-	* Check whether this date is in a leap year
-	*
-	* @return bool true if year is a leap year, false if not
-	*/
+	 * Check whether this date is in a leap year
+	 *
+	 * @return bool true if year is a leap year, false if not
+	 */
 	public function isLeapYear()
 	{
 		return $this->_format('L') ? true : false;
 	}
 
 	/**
-	* Return number of days in this date's year
-	*
-	* Get number of days in a year.
-	* This can be called statically: pass an integer year as argument.
-	*
-	* @param int $iYear year number to check (default is to check this date)
-	* @return int days in year
-	*/
+	 * Return number of days in this date's year
+	 *
+	 * Get number of days in a year.
+	 * This can be called statically: pass an integer year as argument.
+	 *
+	 * @param int $iYear year number to check (default is to check this date)
+	 * @return int days in year
+	 */
 	public function daysInYear()
 	{
 		$oDate = new self(sprintf('%04d-12-31', $this->year()));
@@ -1265,12 +1269,12 @@ class Date
 	}
 
 	/**
-	* Return number of days in this date's month
-	*
-	* Get number of days in a month
-	*
-	* @return int number of days in month
-	*/
+	 * Return number of days in this date's month
+	 *
+	 * Get number of days in a month
+	 *
+	 * @return int number of days in month
+	 */
 	public function daysInMonth()
 	{
 		return $this->_formatInt('t');
@@ -1281,13 +1285,13 @@ class Date
 	// Public - set value
 
 	/**
-	* Set date/time value of this instance
-	*
-	* @param mixed $mDate date/time value in any acceptable format
-	* @param string $sFormat force string date value to be parsed using this format specifier
-	* @return bool true on success, false if date value is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Set date/time value of this instance
+	 *
+	 * @param mixed $mDate date/time value in any acceptable format
+	 * @param string $sFormat force string date value to be parsed using this format specifier
+	 * @return bool true on success, false if date value is invalid
+	 * @throws \Useful\Exception
+	 */
 	public function set($mDate, $sFormat = null)
 	{
 		$this->oTime = $this->_time($mDate, $sFormat);
@@ -1295,16 +1299,16 @@ class Date
 	}
 
 	/**
-	* Change date part of date/time value
-	*
-	* Change date part of this instance's date/time value.
-	*
-	* @param int $iYear year part
-	* @param int $iMonth month part (1 to 12)
-	* @param int $iDay day of month part (1 to 31)
-	* @return bool true on success, false if arguments are invalid
-	* @throws \Useful\Exception
-	*/
+	 * Change date part of date/time value
+	 *
+	 * Change date part of this instance's date/time value.
+	 *
+	 * @param int $iYear year part
+	 * @param int $iMonth month part (1 to 12)
+	 * @param int $iDay day of month part (1 to 31)
+	 * @return bool true on success, false if arguments are invalid
+	 * @throws \Useful\Exception
+	 */
 	public function setDatePart($iYear, $iMonth = 1, $iDay = 1)
 	{
 		if (!$this->oTime->setDate($iYear, $iMonth, $iDay))
@@ -1313,16 +1317,16 @@ class Date
 	}
 
 	/**
-	* Change time part of date/time value
-	*
-	* Change time part of this instance's date/time value.
-	*
-	* @param int $iHour hour part (0 to 23)
-	* @param int $iMinute minute part (0 to 60)
-	* @param int $iSecond second part (0 to 60)
-	* @return bool true on success, false if arguments are invalid
-	* @throws \Useful\Exception
-	*/
+	 * Change time part of date/time value
+	 *
+	 * Change time part of this instance's date/time value.
+	 *
+	 * @param int $iHour hour part (0 to 23)
+	 * @param int $iMinute minute part (0 to 60)
+	 * @param int $iSecond second part (0 to 60)
+	 * @return bool true on success, false if arguments are invalid
+	 * @throws \Useful\Exception
+	 */
 	public function setTimePart($iHour = 0, $iMinute = 0, $iSecond = 0)
 	{
 		if (!$this->oTime->setTime($iHour, $iMinute, $iSecond))
@@ -1331,25 +1335,25 @@ class Date
 	}
 
 	/**
-	* Change timezone of date/time value
-	*
-	* Change timezone for this instance's date/time value.
-	*
-	* Note that this will adjust the listed date/time so as to continue to represent the same
-	*  moment in time.
-	* For example, given this original value:
-	*   2001-01-01 01:00:00+0100
-	* If time zone is changed from +0100 to +0200, the new final value will be:
-	*   2001-01-01 02:00:00+0200
-	*
-	* @param mixed $mTimezone timezone
-	*   string
-	*     timezone name
-	*   \DateTimeZone
-	*     object of php builtin class DateTimeZone
-	* @returns bool true on success, false if argument is invalid
-	* @throws \Useful\Exception
-	*/
+	 * Change timezone of date/time value
+	 *
+	 * Change timezone for this instance's date/time value.
+	 *
+	 * Note that this will adjust the listed date/time so as to continue to represent the same
+	 *  moment in time.
+	 * For example, given this original value:
+	 *   2001-01-01 01:00:00+0100
+	 * If time zone is changed from +0100 to +0200, the new final value will be:
+	 *   2001-01-01 02:00:00+0200
+	 *
+	 * @param mixed $mTimezone timezone
+	 *   string
+	 *     timezone name
+	 *   \DateTimeZone
+	 *     object of php builtin class DateTimeZone
+	 * @returns bool true on success, false if argument is invalid
+	 * @throws \Useful\Exception
+	 */
 	public function changeTimezone($mTimezone)
 	{
 		// Get DateTimeZone object
@@ -1375,12 +1379,12 @@ class Date
 	}
 
 	/**
-	* Change this date value by a time interval
-	*
-	* @param string $sInterval time interval in format accepted by php strtotime()
-	* @return bool true
-	* @throws \Useful\Exception
-	*/
+	 * Change this date value by a time interval
+	 *
+	 * @param string $sInterval time interval in format accepted by php strtotime()
+	 * @return bool true
+	 * @throws \Useful\Exception
+	 */
 	public function adjust($sInterval)
 	{
 		if (!$this->oTime->modify($sInterval))
@@ -1389,35 +1393,35 @@ class Date
 	}
 
 	/**
-	* Change this date value to align to a period boundary
-	*
-	* @param string $sUnit unit type of time period:
-	*   second (or s)
-	*     Every N seconds past the minute (1 to 30)
-	*     (Note: if $iLength is 1 this does nothing)
-	*   minute (or i)
-	*     Every N minutes past the hour (1 to 30)
-	*   hour (or h)
-	*     Every N hours past midnight (1 to 12)
-	*   day (or d)
-	*     Every N days in the calendar month (1 to 16)
-	*   week (or w)
-	*     Every N weeks in the calendar year (1 to 26)
-	*   month (or m)
-	*     Every N months in the calendar year (1 to 6)
-	*   year (or y)
-	*     Every N years (1+)
-	* @param int $iLength length of time period in units
-	* @param string $sWhich control which boundary date to calculate:
-	*   earlier
-	*     align to nearest boundary that is later than (or equal to) the origin date
-	*   later
-	*     align to nearest boundary that is earlier than (or equal to) the origin date
-	*   round
-	*     align to nearest boundary (earlier or later, whichever is closer)
-	* @return bool true
-	* @throws \Useful\Exception
-	*/
+	 * Change this date value to align to a period boundary
+	 *
+	 * @param string $sUnit unit type of time period:
+	 *   second (or s)
+	 *     Every N seconds past the minute (1 to 30)
+	 *     (Note: if $iLength is 1 this does nothing)
+	 *   minute (or i)
+	 *     Every N minutes past the hour (1 to 30)
+	 *   hour (or h)
+	 *     Every N hours past midnight (1 to 12)
+	 *   day (or d)
+	 *     Every N days in the calendar month (1 to 16)
+	 *   week (or w)
+	 *     Every N weeks in the calendar year (1 to 26)
+	 *   month (or m)
+	 *     Every N months in the calendar year (1 to 6)
+	 *   year (or y)
+	 *     Every N years (1+)
+	 * @param int $iLength length of time period in units
+	 * @param string $sWhich control which boundary date to calculate:
+	 *   earlier
+	 *     align to nearest boundary that is later than (or equal to) the origin date
+	 *   later
+	 *     align to nearest boundary that is earlier than (or equal to) the origin date
+	 *   round
+	 *     align to nearest boundary (earlier or later, whichever is closer)
+	 * @return bool true
+	 * @throws \Useful\Exception
+	 */
 	public function adjustAlign($sUnit, $iLength = 1, $sWhich = 'earlier')
 	{
 		// Get boundary unit type
@@ -1546,10 +1550,10 @@ class Date
 	// Special
 
 	/**
-	* Internal use only, do not call directly. Convert to string
-	*
-	* @internal
-	*/
+	 * Internal use only, do not call directly. Convert to string
+	 *
+	 * @internal
+	 */
 	public function __toString()
 	{
 		$sValue = $this->datetime();
@@ -1557,10 +1561,10 @@ class Date
 	}
 
 	/**
-	* Internal use only, do not call directly. Return dump of internal value
-	*
-	* @internal
-	*/
+	 * Internal use only, do not call directly. Return dump of internal value
+	 *
+	 * @internal
+	 */
 	public function dump()
 	{
 		return $this->format('Y-m-d H:i:s T(O)');
@@ -1581,11 +1585,11 @@ class Date
 	protected static $iMinIntValue;
 
 	/**
-	* Internal use only, do not call directly. Class initializer
-	*
-	* @internal
-	* @return void
-	*/
+	 * Internal use only, do not call directly. Class initializer
+	 *
+	 * @internal
+	 * @return void
+	 */
 	public static function _init()
 	{
 		self::$iMinIntValue = -2147483648;

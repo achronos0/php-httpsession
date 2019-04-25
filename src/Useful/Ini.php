@@ -1,10 +1,11 @@
 <?php
 /**
-* Parse and generate INI-format text data
-*
-* @link https://github.com/achronos0/useful
-* @copyright Ky Patterson 2016, licensed under Apache 2.0
-*/
+ * \Useful\Ini class
+ *
+ * @link https://github.com/achronos0/useful
+ * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
+ * @package Useful
+ */
 
 /*==NAMESPACE*/
 namespace Useful;
@@ -13,21 +14,24 @@ if (!class_exists('Useful\\Exception', false)) {
 }
 /*NAMESPACE==*/
 
+/**
+ * Parse and generate INI-format text data
+ */
 class Ini
 {
 	//////////////////////////////
 	// Public static
 
 	/**
-	* Read file into an array
-	*
-	* Read all data from an INI text file and return as a PHP array.
-	*
-	* @param string $sFilePath file path
-	* @param array $this->aOptions configuration settings, see docs
-	* @return array parsed data, or false on error
-	* @throws \Useful\Exception
-	*/
+	 * Read file into an array
+	 *
+	 * Read all data from an INI text file and return as a PHP array.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $this->aOptions configuration settings, see docs
+	 * @return array parsed data, or false on error
+	 * @throws \Useful\Exception
+	 */
 	public static function read($sFilePath, $aOptions = array())
 	{
 		// Check whether file exists
@@ -50,14 +54,14 @@ class Ini
 	}
 
 	/**
-	* Parse string into an array
-	*
-	* Convert INI text content into a PHP array.
-	*
-	* @param string $sContent delimited text content
-	* @param array $this->aOptions configuration settings, see docs
-	* @return array parsed data, or false on error
-	*/
+	 * Parse string into an array
+	 *
+	 * Convert INI text content into a PHP array.
+	 *
+	 * @param string $sContent delimited text content
+	 * @param array $this->aOptions configuration settings, see docs
+	 * @return array parsed data, or false on error
+	 */
 	public static function parse($sContent, $aOptions = array())
 	{
 		// Parse and return content
@@ -66,18 +70,18 @@ class Ini
 	}
 
 	/**
-	* Write file from an array
-	*
-	* Write an INI text file using data from a PHP array.
-	*
-	* If file exists it will be overwritten.
-	*
-	* @param string $sFilePath file path
-	* @param array $aData data to write
-	* @param array $this->aOptions configuration settings, see docs
-	* @return void
-	* @throws \Useful\Exception
-	*/
+	 * Write file from an array
+	 *
+	 * Write an INI text file using data from a PHP array.
+	 *
+	 * If file exists it will be overwritten.
+	 *
+	 * @param string $sFilePath file path
+	 * @param array $aData data to write
+	 * @param array $this->aOptions configuration settings, see docs
+	 * @return void
+	 * @throws \Useful\Exception
+	 */
 	public static function write($sFilePath, $aData, $aOptions = array())
 	{
 		// Check whether file is writable
@@ -101,14 +105,14 @@ class Ini
 	}
 
 	/**
-	* Generate string from array
-	*
-	* Generate INI text content using data from a PHP array.
-	*
-	* @param array $aData data to write
-	* @param array $this->aOptions configuration settings, see docs
-	* @return string generated INI text
-	*/
+	 * Generate string from array
+	 *
+	 * Generate INI text content using data from a PHP array.
+	 *
+	 * @param array $aData data to write
+	 * @param array $this->aOptions configuration settings, see docs
+	 * @return string generated INI text
+	 */
 	public static function generate($aData, $aOptions = array())
 	{
 		// Generate and return content

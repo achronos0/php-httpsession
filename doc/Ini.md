@@ -93,9 +93,11 @@ A line beginning with // or # is ignored
 	// ignored
 
 C-style multi-line comments are also supported
+	```
 	/*
 		ignored
-	*\/
+	*/
+	```
 
 Comments cannot be only part of a line
 
