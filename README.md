@@ -106,16 +106,21 @@ The legacy autoloader uses a classname prefix (`Useful_Foo`) instead of namespac
 
 ### PHP 5.0 loader
 
-PHP 5.0 does not have `spl_autoload_register()`, only `__autoload()`. That's supported too. The legacy loader can be used to load a class directly without namespace.
+PHP 5.0 does not have `spl_autoload_register()`. That's ok. The legacy loader can be used to load a class directly without namespace.
 
 ```php
 // Load Useful_Legacy_Loader class
 require_once('WHEREVER_YOU_PUT_VENDOR_CODE/useful/src/Useful_Legacy/Loader.php');
+Useful_Legacy_Loader::registerNamespace(
+	'\Useful',
+	'WHEREVER_YOU_PUT_VENDOR_CODE/useful/src/Useful',
+	'WRITABLE_TEMP_DIRECTORY_FOR_CODE_CACHING/'
+);
 
 function __autoload($sClass)
 {
 	// Try Useful legacy loader, it will return FALSE if not handled.
-	// You could also just call this directly for each class you need, without an autoloader.
+	// You could also just call this method directly for each class you want, without an autoloader.
 	if (Useful_Legacy_Loader::loadClass($sClass)) {
 		return;
 	}
