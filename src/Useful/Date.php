@@ -55,7 +55,7 @@ class Date
 	 * @return Date new date/time object
 	 * @throws \Useful\Exception
 	 */
-	public function create($mDate, $sFormat = null, $mTimezone = null)
+	public static function create($mDate, $sFormat = null, $mTimezone = null)
 	{
 		return new self($mDate, $sFormat, $mTimezone);
 	}
