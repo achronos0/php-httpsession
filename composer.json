@@ -1,14 +1,14 @@
 {
-	"name": "achronos0/useful",
+	"name": "morvren-achronos/useful",
 	"version": "0.1.0",
 	"time" : "2016-11-20",
 	"description": "Useful is a PHP non-framework. It's a collection use utility classes. Take what you want, leave the rest.",
-	"homepage": "https://github.com/achronos0/useful",
+	"homepage": "https://github.com/morvren-achronos/php-useful",
 	"license" : "Apache-2.0",
 	"authors": [
 		{
 			"name": "Ky Patterson",
-			"email": "me@achronos.ca"
+			"email": "ky@morvren-achronos.com"
 		}
 	],
 	"require": {
