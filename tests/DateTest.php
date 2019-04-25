@@ -25,9 +25,11 @@ class DateTest extends TestCase
 		}
     }
 
+    /**
+     * @expectedException \Useful\Exception
+     */
 	public function testCreateMalformed()
 	{
-		$this->expectException('\Useful\Exception');
 		\Useful\Date::create('foobar');
 	}
 
