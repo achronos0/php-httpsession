@@ -129,4 +129,4 @@ $oDate = Useful_Date::create('1999-12-31');
 
 ## Tests
 
-Uses PHPUnit. Most classes have good test coverage.
+Uses PHPUnit. Alas test coverage is [2019-04] @TODO very incomplete for some classes.
