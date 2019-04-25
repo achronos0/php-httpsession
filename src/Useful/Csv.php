@@ -6,7 +6,12 @@
 * @copyright Ky Patterson 2016, licensed under Apache 2.0
 */
 
+/*==NAMESPACE*/
 namespace Useful;
+if (!class_exists('Useful\\Exception', false)) {
+	class Exception extends \Exception {};
+}
+/*NAMESPACE==*/
 
 class Csv
 {
@@ -1746,8 +1751,4 @@ class Csv
 			$this->mHandle = '';
 		}
 	}
-}
-
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
 }

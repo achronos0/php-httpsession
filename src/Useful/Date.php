@@ -2,11 +2,16 @@
 /**
 * Work with date/time values
 *
-* @link https://github.com/achronos0/useful
-* @copyright Ky Patterson 2016, licensed under Apache 2.0
+* @link https://github.com/morvren-achronos/useful
+* @copyright Morvren-Achronos 2019, licensed under Apache 2.0
 */
 
+/*==NAMESPACE*/
 namespace Useful;
+if (!class_exists('Useful\\Exception', false)) {
+	class Exception extends \Exception {};
+}
+/*NAMESPACE==*/
 
 class Date
 {
@@ -1659,10 +1664,6 @@ class Date
 	{
 		return intval($this->oTime->format($sFormat));
 	}
-}
-
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
 }
 
 // Initialize class

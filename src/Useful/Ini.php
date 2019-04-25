@@ -6,7 +6,12 @@
 * @copyright Ky Patterson 2016, licensed under Apache 2.0
 */
 
+/*==NAMESPACE*/
 namespace Useful;
+if (!class_exists('Useful\\Exception', false)) {
+	class Exception extends \Exception {};
+}
+/*NAMESPACE==*/
 
 class Ini
 {
@@ -774,8 +779,4 @@ class Ini
 		}
 		return true;
 	}
-}
-
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
 }

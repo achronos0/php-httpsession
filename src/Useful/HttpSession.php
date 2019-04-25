@@ -2,11 +2,16 @@
 /**
 * Manage an HTTP session
 *
-* @link https://github.com/achronos0/useful
-* @copyright Ky Patterson 2016, licensed under Apache 2.0
+* @link https://github.com/morvren-achronos/useful
+* @copyright Morvren-Achronos 2019, licensed under Apache 2.0
 */
 
+/*==NAMESPACE*/
 namespace Useful;
+if (!class_exists('Useful\\Exception', false)) {
+	class Exception extends \Exception {};
+}
+/*NAMESPACE==*/
 
 class HttpSession
 {
@@ -1095,8 +1100,4 @@ class HttpSession
 		if ($this->rCurl)
 			@curl_close($this->rCurl);
 	}
-}
-
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
 }
