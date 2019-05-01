@@ -2,7 +2,7 @@
 /**
  * \Useful\Ini class
  *
- * @link https://github.com/achronos0/useful
+ * @link https://github.com/morvren-achronos/php-useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
  * @package Useful
  */
