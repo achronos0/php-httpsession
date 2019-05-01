@@ -7,15 +7,12 @@
  * @package Useful
  */
 
-/*==NAMESPACE*/
 namespace Useful;
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
-}
-/*NAMESPACE==*/
 
 /**
  * Parse and generate INI-format text data
+ *
+ * @uses \Useful\Exception
  */
 class Ini
 {

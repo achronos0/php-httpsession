@@ -7,15 +7,14 @@
  * @package Useful
  */
 
-/*==NAMESPACE*/
 namespace Useful;
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
-}
-/*NAMESPACE==*/
 
 /**
  * Work with date/time values
+ *
+ * @uses \Useful\Exception
+ * @uses \DateTime
+ * @uses \DateTimeZone
  */
 class Date
 {

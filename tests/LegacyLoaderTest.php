@@ -6,18 +6,6 @@ class LegacyLoaderTest extends TestCase
 {
 	public function testClassLoader()
 	{
-		require_once(__DIR__ . '/data/vendorlib/Foo/Bar_Baz/Bat.php');
-		$oBat = new \Foo\Bar_Baz\Bat();
-		$this->assertEquals('ok', $oBat->test());
-		$e = null;
-		try {
-			$oBat->error();
-		}
-		catch (Exception $e) {
-			/* */
-		}
-		$this->assertInstanceOf('Foo\Bar_Baz\Exception', $e);
-
 		require_once(__DIR__ . '/../src/Useful_Legacy/Loader.php');
 		
 		$sRootClassDir = __DIR__ . '/data/vendorlib/Foo';
@@ -39,8 +27,7 @@ class LegacyLoaderTest extends TestCase
 		);
 
 		Useful_Legacy_Loader::clearCache('Foo');
-
-		Useful_Legacy_Loader::loadClass('Foo_Bar_Baz_Bat', true);
+		Useful_Legacy_Loader::registerSplAutoloader();
 		$oBat = new Foo_Bar_Baz_Bat();
 		$this->assertEquals('ok', $oBat->test());
 		$e = null;
@@ -51,6 +38,7 @@ class LegacyLoaderTest extends TestCase
 			/* */
 		}
 		$this->assertInstanceOf('Exception', $e);
+		$this->assertEquals('Foo_Bar_Baz_Exception', get_class($e));
 
 		Useful_Legacy_Loader::clearCache('Foo');
 		$this->assertEquals(false, is_dir($sCacheDir));
@@ -60,9 +48,21 @@ class LegacyLoaderTest extends TestCase
     {
 		require_once(__DIR__ . '/../src/legacy_autoloader.php');
 		Useful_Legacy_Loader::clearCache();
+		
 		$oDate = Useful_Date::create('1999-12-31');
 		$this->assertEquals('1999', $oDate->year());
+
 		Useful_Legacy_Loader::clearCache();
-		rmdir(dirname(__DIR__) . '/lsrc');
+		$sDir = dirname(__DIR__) . '/lsrc';
+		foreach (scandir($sDir) as $sFile) {
+			if (in_array($sFile, array('.', '..'))) {
+				continue;
+			}
+			unlink($sDir . DIRECTORY_SEPARATOR . $sFile);
+			if (substr($sFile, 0, 1) != '.') {
+				$this->fail('Useful_Legacy_Loader::clearCache() did not remove file ' . $sFile);
+			}
+		}
+		rmdir($sDir);
     }
 }

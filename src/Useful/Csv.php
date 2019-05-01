@@ -7,15 +7,12 @@
  * @package Useful
  */
 
-/*==NAMESPACE*/
 namespace Useful;
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
-}
-/*NAMESPACE==*/
 
 /**
  * Parse and generate delimited text data (CSV, TSV, etc.)
+ *
+ * @uses \Useful\Exception
  */
 class Csv
 {

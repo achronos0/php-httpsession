@@ -1,6 +1,6 @@
 # useful
 
-Useful is a PHP non-framework. Take the classes you want, leave the rest.
+Useful is a PHP library collection with a focus on simplicity. Take what you want, ignore the rest.
 
 Goals:
 
@@ -14,19 +14,19 @@ It solves common challenges that are not well addressed by the PHP language, com
 
 Useful can be used quickly without lots of reading and training.
 
-Class hierarchy is flat. Each class does one thing. All classes are intended to be directly used by application developers.
+Class hierarchy is flat. Each class does one thing. All classes are immediately useful to application developers.
 
 *Easy integration*
 
 Useful does not _require_ you to do anything in one particular way.
 
-It has no internal dependencies between classes. It has few external dependencies, and those are clearly marked. Every class stands on its own and can be used on its own.
+It has few dependencies, and dependencies are clearly marked. Every class stands on its own and can be used on its own.
 
 ## Requirements
 
-PHP 5 >= 5.4, or PHP 7, or PHP 5 >= 5.1 with special handling (see _No namespaces_ below).
+PHP 5 >= 5.4 or PHP 7; or PHP 5 >= 5.1 with special handling (see _No namespaces_ below).
 
-Most classes should work anywhere that PHP does. Exceptions, such as `Cli` and `Script`, will be clearly marked.
+Most classes should work anywhere that PHP does. Exceptions are clearly marked.
 
 
 ## Installation
@@ -74,23 +74,9 @@ $oDate = \Useful\Date::create('1999-12-31');
 
 It's a simple PSR-4 autoloader for the `\Useful` namespace.
 
-### Include individual classes
-
-Useful classes have no interdependencies so you can `require_once()` any top-level Useful class directly, one at a time.
-
-Example:
-
-```php
-// Load single Useful class
-require_once('WHEREVER_YOU_PUT_VENDOR_CODE/useful/src/Useful/Date.php');
-
-// Create a Useful Date object
-$oDate = \Useful\Date::create('1999-12-31');
-```
-
 ### Legacy (non-namespace) loader
 
-Useful actually supports PHP 5 back to at least 5.1 (maybe even 5.0, although that is not tested), via its "legacy loading" system.
+Useful supports PHP 5 back to at least 5.1 via its "legacy loading" system.
 
 #### PHP 5.1-compatible SPL autoloader
 
@@ -134,4 +120,4 @@ $oDate = Useful_Date::create('1999-12-31');
 
 ## Tests
 
-Uses PHPUnit. Alas test coverage is [2019-04] @TODO very incomplete for some classes.
+Uses PHPUnit. Test coverage is [2019-04] @TODO very incomplete for some classes.

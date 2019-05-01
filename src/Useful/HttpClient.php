@@ -1,23 +1,21 @@
 <?php
 /**
- * \Useful\HttpSession class
+ * \Useful\HttpClient class
  *
  * @link https://github.com/morvren-achronos/useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
  * @package Useful
  */
 
-/*==NAMESPACE*/
 namespace Useful;
-if (!class_exists('Useful\\Exception', false)) {
-	class Exception extends \Exception {};
-}
-/*NAMESPACE==*/
 
 /**
  * Manage an HTTP session
+ *
+ * @uses \Useful\Exception
+ * @uses extension curl
  */
-class HttpSession
+class HttpClient
 {
 	//////////////////////////////
 	// Public static

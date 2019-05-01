@@ -1,19 +1,33 @@
 <?php
 
-/*==NAMESPACE*/
 namespace Foo\Bar_Baz;
-if (!class_exists('Foo\Bar_Baz\Exception', false)) {
-	class Exception extends \Exception {};
-}
-/*NAMESPACE==*/
 
-class Bat
+use Foo\FooClass, ArrayAccess;
+
+class Bat extends AbstractBat implements InterfaceBat, \Countable
 {
-	public function test() {
+	public function test()
+	{
 		return 'ok';
 	}
 
-	public function error() {
+	public function getFoo()
+	{
+		return new FooClass('ok');
+	}
+
+	public function getFooStatic()
+	{
+		return FooClass::whoo('ok');
+	}
+
+	public function error()
+	{
 		throw new Exception('test');
+	}
+
+	public function count()
+	{
+		return 0;
 	}
 }
