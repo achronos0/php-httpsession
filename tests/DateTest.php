@@ -25,15 +25,13 @@ class DateTest extends TestCase
 		}
     }
 
-    /**
-     * @expectedException \Useful\Exception
-     */
 	public function testCreateMalformed()
 	{
+		$this->expectException(\Useful\Exception::class);
 		\Useful\Date::create('foobar');
 	}
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		date_default_timezone_set('UTC');
 	}

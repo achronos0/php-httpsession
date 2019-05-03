@@ -14,12 +14,12 @@ abstract class BaseConversionTest extends TestCase
 	//////////////////////////////
 	// Overload TestCase defaults
 
-	public function setUp()
+	public function setUp(): void
 	{
 		$this->sTempFile = tempnam(sys_get_temp_dir(), 'php');
 	}
 
-	public function tearDown()
+	public function tearDown(): void
 	{
 		@unlink($this->sTempFile);
 	}
