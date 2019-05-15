@@ -399,7 +399,7 @@ class TextPatterns
 	public static function interpolate($sTemplate, $aData)
 	{
 		foreach ($aData as $sKey => $mValue) {
-			$sTemplate = str_replace("%$sKey%", $mValue, $sTemplate);
+			$sTemplate = str_replace('{' . $sKey . '}', $mValue, $sTemplate);
 		}
 		return $sTemplate;
 	}
