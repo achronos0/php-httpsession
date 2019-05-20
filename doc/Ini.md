@@ -457,9 +457,11 @@ Value comparison is case-insensitive. Text matches MUST be provided in uppercase
 
 Use this option to bypass default key/value handling and substitute custom logic.
 
+Note, if `data_handler_call` is provided then parse methods will _not_ return any value, instead the callable must process/store the data.
+
 Function signature:
 
-	bool|void function (string $sSection, string $sKey, mixed $mValue)
+	function (string $sSection, string $sKey, mixed $mValue): bool?
 
 Arguments:
 
@@ -472,7 +474,7 @@ Returns:
 * `bool FALSE`: Stop processing. No further content will be parsed
 * other: Continue processing
 
-Using a custom data handler effectively disables `hierarchy` and gspecial key name processing
+Using a custom data handler effectively disables `hierarchy` and special key name processing
 ("name[]=value" and "name+=value").
 
 Section and key names are provided verbatim as they appear in the content.
