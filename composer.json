@@ -1,8 +1,9 @@
 {
 	"name": "morvren-achronos/useful",
+    "type": "library",
 	"version": "0.1.1",
 	"time" : "2010-05-21",
-	"description": "Useful is a PHP non-framework. It's a collection use utility classes. Use what you want, leave the rest.",
+	"description": "Useful is a PHP non-framework. It's a collection use utility classes. Take what you want, leave the rest.",
 	"homepage": "https://github.com/morvren-achronos/php-useful",
 	"license" : "Apache-2.0",
 	"authors": [
@@ -12,9 +13,11 @@
 		}
 	],
 	"require": {
-		"php": "^5.2 || ^7.0",
-		"ext-curl": "*",
+		"php": "^5.0 || ^7.0",
 		"psr/log": "^1.1"
+	},
+	"suggest": {
+		"ext-curl": "Required for Useful\\HttpClient",
 	},
 	"autoload": {
 		"psr-4": {
