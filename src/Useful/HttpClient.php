@@ -2,7 +2,7 @@
 /**
  * \Useful\HttpClient class
  *
- * @link https://github.com/morvren-achronos/useful
+ * @link https://github.com/morvren-achronos/php-useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
  * @package Useful
  */
