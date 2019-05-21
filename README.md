@@ -24,7 +24,7 @@ It has few dependencies, and dependencies are clearly marked. Every class stands
 
 ## Requirements
 
-PHP 5 >= 5.4 or PHP 7; or PHP 5 >= 5.1 with special handling (see _No namespaces_ below).
+PHP 5 >= 5.4 or PHP 7; or PHP 5 >= 5.0 with special handling (see _No namespaces_ below).
 
 Most classes should work anywhere that PHP does. Exceptions are clearly marked.
 
@@ -74,9 +74,11 @@ $oDate = \Useful\Date::create('1999-12-31');
 
 It's a simple PSR-4 autoloader for the `\Useful` namespace.
 
-### Legacy (non-namespace) loader
+### No namespaces: Legacy loader
 
-Useful supports PHP 5 back to at least 5.1 via its "legacy loading" system.
+Useful supports PHP 5 back to (in theory) 5.0 via its "legacy loading" system.
+
+Note, the test suite requires PHP 7. Author has used parts of Useful on PHP 5.1. Your mileage may vary.
 
 #### PHP 5.1-compatible SPL autoloader
 
@@ -90,7 +92,7 @@ $oDate = Useful_Date::create('1999-12-31');
 
 The legacy autoloader uses a classname prefix (`Useful_Foo`) instead of namespace (`\Useful\Foo`).
 
-### PHP 5.0 loader
+#### PHP 5.0 loader
 
 PHP 5.0 does not have `spl_autoload_register()`. That's ok. The legacy loader can be used to load a class directly without namespace.
 

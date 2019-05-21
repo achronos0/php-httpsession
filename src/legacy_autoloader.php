@@ -7,17 +7,26 @@
  * @package Useful
  */
 
-// The namespace to autoload
-$sNamespace = 'Useful';
+// Files are relative to here (Useful package root)
+$sRootDir = dirname(dirname(__FILE__));
 
-// Where the classes live
-$sSourceDir = dirname(__FILE__); // ./src
-$sCacheDir = dirname($sSourceDir) . DIRECTORY_SEPARATOR . 'lsrc'; // ../lsrc
+// Where to put cached class files
+$sCacheDir = "$sRootDir/lsrc";
 
-require_once('Useful_Legacy/Loader.php');
-Useful_Legacy_Loader::registerNamespace(
-	$sNamespace,
-	$sSourceDir . DIRECTORY_SEPARATOR . $sNamespace,
-	$sCacheDir . DIRECTORY_SEPARATOR . $sNamespace
+// The namespaces to autoload, and where to find the classes
+$aNamespaceList = array(
+	'Useful' => "$sRootDir/src/Useful",
+	'Psr\\Log' => "$sRootDir/vendor/psr/log/Psr/Log",
 );
+
+
+////////////////////
+
+// Include Useful_Legacy_Loader class
+require_once('Useful_Legacy/Loader.php');
+
+// Register namespaces for loading
+foreach ($aNamespaceList as $sNamespace => $sSourceDir) {
+	Useful_Legacy_Loader::registerNamespace($sNamespace, $sSourceDir, "$sCacheDir/$sNamespace");
+}
 Useful_Legacy_Loader::registerSplAutoloader();
