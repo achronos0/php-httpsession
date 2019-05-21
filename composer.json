@@ -1,7 +1,6 @@
 {
 	"name": "morvren-achronos/useful",
     "type": "library",
-	"version": "0.1.1",
 	"time" : "2010-05-21",
 	"description": "Useful is a PHP non-framework. It's a collection use utility classes. Take what you want, leave the rest.",
 	"homepage": "https://github.com/morvren-achronos/php-useful",
