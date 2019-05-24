@@ -1,6 +1,6 @@
 <?php
 /**
- * \Useful\Logger\Writer\Display class
+ * \Useful\Logger\Writer\Stderr class
  *
  * @link https://github.com/morvren-achronos/php-useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
@@ -12,15 +12,14 @@ namespace Useful\Logger\Writer;
 use Useful\Logger\AbstractWriter;
 
 /**
- * Output messages immediately to console or page
+ * Output messages immediately to console STDERR
  *
- * Writer config settings:
- *     (bool|null) `html` - TRUE to output messages with HTML formatting; FALSE to output plain-text messages; NULL to use plain text for command-line, HTML otherwise.
+ * Writer config settings: (none)
  *
  * @uses \Useful\Logger
  * @uses \Useful\Logger\AbstractWriter
  */
-class Display extends AbstractWriter
+class Stderr extends AbstractWriter
 {
 	//////////////////////////////
 	// Implement AbstractWriter
@@ -37,9 +36,7 @@ class Display extends AbstractWriter
 	public function commit($aWriterConfig, $aLogConfig, $aMessage)
 	{
 		$aFormat = isset($aWriterConfig['format']) ? $aWriterConfig['format'] : array();
-		$aFormat['html'] = isset($aWriterConfig['html']) ? $aWriterConfig['html'] : (PHP_SAPI != 'cli');
-		print $this->oLogger->formatMessage($aMessage, $aFormat);
-		flush();
+		fputs(STDERR, $this->oLogger->formatMessage($aMessage, $aFormat));
 	}
 	
 	/**
