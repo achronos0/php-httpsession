@@ -15,4 +15,6 @@ class HttpClientTest extends TestCase
 		$this->assertEquals('/path/to/file.ext', $aOptions['path']);
 		$this->assertEquals('foo=bar&foo=baz&bar=&bat&=urp', $aOptions['query']);
     }
+
+    /* @TODO many more tests needed */
 }

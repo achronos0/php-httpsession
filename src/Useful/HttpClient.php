@@ -10,7 +10,7 @@
 namespace Useful;
 
 /**
- * Manage an HTTP session
+ * Make HTTP/HTTPS requests
  *
  * @uses \Useful\Exception
  * @uses extension curl
@@ -21,11 +21,11 @@ class HttpClient
 	// Public static
 
 	/**
-	 * Set global default parameters
+	 * Set global default call parameters
 	 *
-	 * Global default parameters are used as initial session defaults for new session objects.
+	 * Global default parameters are used as initial defaults for new client objects.
 	 *
-	 * Common global default parameters:
+	 * Common global default parameters to set:
 	 *   * ssl_ca_file
 	 *   * ssl_ignore_cert
 	 *   * charset
@@ -33,21 +33,22 @@ class HttpClient
 	 *
 	 * See docs for a reference of all available call parameters.
 	 *
-	 * @param array $aParams global default call parameters to set
-	 * @return bool true
+	 * @param array $aParams global default call parameters
+	 * @return void
 	 */
 	public static function setDefaultParams($aParams)
 	{
 		self::$aDefaultParams = self::prepParams($aParams, self::$aDefaultParams);
-		return true;
 	}
 
 	/**
-	 * Get global default parameters
+	 * Return global default call parameters
 	 *
-	 * Global default parameters are used as initial session defaults for new session objects.
+	 * Global default parameters are used as initial defaults for new client objects.
 	 *
-	 * @return array all global default call parameters
+	 * See docs for a reference of all available call parameters.
+	 *
+	 * @return array global default call parameters
 	 */
 	public static function getDefaultParams()
 	{
@@ -57,31 +58,25 @@ class HttpClient
 	/**
 	 * Add custom call types
 	 *
-	 * In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it
-	 *  is possible to define custom types.
+	 * In addition to the standard built-in call 'type' values (get, form, multipart, etc.), it is possible to define custom types.
 	 *
-	 * Each type has a name, which is the value used in the 'type' call parameter, and an array of
-	 *  definition data.
+	 * Each type has a name, which is the value used in the 'type' call parameter, and an array of definition data.
 	 *
-	 * At the moment only one definition element is defined:
-	 *   handler
-	 *     (callback) handler function that prepares data when this type is used in a call
+	 * Currently only one definition element is defined:
+	 *     callable `handler` function that prepares data when this type is used in a call
 	 *
 	 * Handler function signature:
-	 *   function (array $aParams, HttpSession $oHttp): array
+	 *
+	 *     function handler(array $aParams, \Useful\HttpClient $oHttp): array
 	 *
 	 * Arguments:
-	 *   array       $aParams all call parameters
-	 *   HttpSession $oHttp   session object
+	 *     array $aParams all call parameters
+	 *     \Useful\HttpClient $oHttp client object
 	 *
 	 * Return: array callback may return any/all of these keys:
-	 *   post_mode
-	 *     string on of the following: get form data file
-	 *   post_data
-	 *     mixed finalized request body, formatted per post_mode
-	 *     See documentation.
-	 *   params
-	 *     array call parameters to change.
+	 *     string `post_mode` on of the following: get form data file
+	 *     mixed `post_data` finalized request body, formatted per post_mode (see docs)
+	 *     array `params` altered call parameters
 	 *
 	 * @param array $aCallTypes new call types to register
 	 * @return void
@@ -106,9 +101,9 @@ class HttpClient
 	// Public
 
 	/**
-	 * Return an object for making HTTP/HTTPS requests
+	 * Create a new HTTP/HTTPS client object
 	 *
-	 * @param array $aParams session default call parameters to set
+	 * @param array $aParams client default call parameters
 	 */
 	public function __construct($aParams = array())
 	{
@@ -116,11 +111,11 @@ class HttpClient
 	}
 
 	/**
-	 * Set session default parameters
+	 * Set client default call parameters
 	 *
-	 * Session default parameters are applied to all requests made by this object.
+	 * Client default parameters are applied to all requests made by this object.
 	 *
-	 * Common session default parameters:
+	 * Common client default parameters:
 	 *   * host
 	 *   * ssl
 	 *   * charset
@@ -128,21 +123,22 @@ class HttpClient
 	 *
 	 * See docs for a reference of all available call parameters.
 	 *
-	 * @param array $aParams session default call parameters to set
-	 * @return bool true
+	 * @param array $aParams client default call parameters
+	 * @return void
 	 */
 	public function setParams($aParams)
 	{
 		$this->aParams = self::prepParams($aParams, $this->aParams);
-		return true;
 	}
 
 	/**
-	 * Get session default parameters
+	 * Return client default call parameters
 	 *
-	 * Session default parameters are applied to all requests made by this object.
+	 * Client default parameters are applied to all requests made by this object.
 	 *
-	 * @return array session default call parameters
+	 * See docs for a reference of all available call parameters.
+	 *
+	 * @return array client default call parameters
 	 */
 	public function getParams()
 	{
@@ -150,14 +146,13 @@ class HttpClient
 	}
 
 	/**
-	 * Store additional data with session
+	 * Associate additional custom data with this client
 	 *
-	 * This additional data is not used by HttpSession but can be used by attached custom
-	 *  routines (e.g. parser_callback, logger_callback).
+	 * This additional data is not used by this class but can be used by related custom code e.g. parser_callback, logger_callback.
 	 *
-	 * @param array $aData session additional data
-	 * @param bool  $bClear true to remove existing data, false to merge old and new data
-	 * @return bool true
+	 * @param array $aData additional data
+	 * @param bool $bClear true to remove existing existing data, false to merge existing and new data
+	 * @return void
 	 */
 	public function setData($aData, $bClear = false)
 	{
@@ -166,16 +161,14 @@ class HttpClient
 			? $aData
 			: array_merge($this->aParams['data'], $aData)
 		;
-		return true;
 	}
 
 	/**
-	 * Get session additional data
+	 * Return additional data associated with this client
 	 *
-	 * This additional data is not used by HttpSession but can be used by attached custom
-	 *  routines (e.g. parser_callback, logger_callback).
+	 * This additional data is not used by \Useful\HttpClient but can be used by attached custom routines (e.g. parser_callback, logger_callback).
 	 *
-	 * @return array session additional data
+	 * @return array additional data
 	 */
 	public function getData()
 	{
@@ -183,12 +176,11 @@ class HttpClient
 	}
 
 	/**
-	 * Get reference to session additional data
+	 * Get reference to additional associated data
 	 *
-	 * This additional data is not used by HttpSession but can be used by attached custom
-	 *  routines (e.g. parser_callback, logger_callback).
+	 * This additional data is not used by \Useful\HttpClient but can be used by attached custom routines (e.g. parser_callback, logger_callback).
 	 *
-	 * @return array-ref session additional data
+	 * @return &array additional data
 	 */
 	public function &getDataRef()
 	{
@@ -198,8 +190,7 @@ class HttpClient
 	/**
 	 * Execute an HTTP request and return response content
 	 *
-	 * Call is executed based on call parameters passed in $aParams, using session defaults
-	 *  for parameters that are not specified.
+	 * Call is executed based on call parameters passed in $aParams, using client defaults for parameters that are not specified.
 	 *
 	 * Common call-time call parameters:
 	 *   * url
@@ -209,51 +200,31 @@ class HttpClient
 	 *
 	 * See docs for a reference of all available call parameters.
 	 *
-	 * The function will return the response content as a string, unless the 'download' parameter
-	 *  is in use.
+	 * The function will return the response content as a string, unless the 'download' parameter is set.
 	 *
-	 * On a communication failure or HTTP error, the function will return false.
-	 * Call httpError() to get a text description of the error.
+	 * On a communication failure or HTTP error, the function will return false. Call {@link httpError()} to get a text description of the error.
 	 *
-	 * To always return response content, even when the server returns an error HTTP status code,
-	 *  use the 'ignore_failure' call parameter.
+	 * To always return response content, even when the server returns an error HTTP status code, set the `ignore_failure` call parameter.
 	 *
-	 * To gather detailed information about the disposition of the call (on success or failure),
-	 *  pass the $aResults param.
+	 * To get detailed info about the result of the call, pass the $aResults param.
 	 * The variable will be populated with data about the request and response:
-	 *   success
-	 *     (bool) true on success, false on error
-	 *   error
-	 *     (string) error message, same as returned by httpError()
-	 *   curl_errno
-	 *     (int) cURL error number
-	 *   http_status
-	 *     (int) HTTP status code
-	 *   content
-	 *     string) response content body
-	 *   headers
-	 *     (string) response headers
-	 *     includes headers from all responses, in cases of redirection
-	 *   content_type
-	 *     (string) response content MIME type
-	 *   time
-	 *     (float) elapsed request time in seconds
-	 *   original_url
-	 *     (string) URL originally requested
-	 *   final_url
-	 *     (string) URL actually returned
-	 *     may differ from original_url, in cases of redirection
-	 *   redirect_count
-	 *     (int) number of redirects followed between original URL and actual URL
-	 *   http_method
-	 *     (string) request HTTP method, usually "GET" or "POST"
-	 *   request_headers
-	 *     (string) request headers sent (from final call, in cases of redirection)
-	 *   post_data
-	 *     (mixed) post data sent in original request
+	 *     bool `success` true on success, false on error
+	 *     string `error` error message, same as returned by httpError()
+	 *     int `curl_errno` cURL error number
+	 *     int `http_status` HTTP status code
+	 *     string `content` response content body
+	 *     string `headers` response headers. Includes headers from all responses, in cases of redirection
+	 *     string `content_type` response content MIME type
+	 *     float `time` elapsed request time in seconds
+	 *     string `original_url` URL originally requested
+	 *     string `final_url` URL actually returned. Can be different from `original_url` in cases of redirection
+	 *     int `redirect_count` number of redirects followed between original URL and actual URL
+	 *     string `http_method` request HTTP method, usually "GET" or "POST"
+	 *     string `request_headers` request headers sent (from final call, in cases of redirection)
+	 *     mixed `post_data` post data sent in original request
 	 *
 	 * @param array $aParams call-time call parameters
-	 * @param array-ref &$aResults variable is populated with data about the call
+	 * @param &array $aResults variable is populated with data about the call
 	 * @return string response content; or false on failure; or true if 'download' parameter is set
 	 * @throws \Useful\Exception on misconfiguration. Note does NOT throw an exception on HTTP failure.
 	 */
@@ -263,15 +234,17 @@ class HttpClient
 		$aParams = self::prepParams($aParams, $this->aParams);
 
 		// Validate call data
-		if (empty($aParams['host']))
+		if (empty($aParams['host'])) {
 			throw new Exception('Call misconfigured: missing host');
+		}
 		if (empty($aParams['path'])) {
 			throw new Exception(
 				'Call misconfigured: missing path (host: ' . $aParams['host'] . ')'
 			);
 		}
-		if (!isset(self::$aCallTypes[$aParams['type']]))
+		if (!isset(self::$aCallTypes[$aParams['type']])) {
 			throw new Exception('Call misconfigured: invalid type "' . $aParams['type'] . '"');
+		}
 
 		// Get custom routines
 		$xTypeHandler = self::$aCallTypes[$aParams['type']]['handler'];
@@ -280,24 +253,29 @@ class HttpClient
 
 		// Assemble URL
 		$aParams['url'] = ($aParams['ssl'] ? 'https://' : 'http://') . $aParams['host'];
-		if ($aParams['port'])
+		if ($aParams['port']) {
 			$aParams['url'] .= ':' . $aParams['port'];
+		}
 		$aParams['url'] .= $aParams['path'];
 		$sQuery = self::queryToString($aParams['query'], $aParams['extra_query']);
-		if ($sQuery)
+		if ($sQuery) {
 			$aParams['url'] .= '?' . $sQuery;
+		}
 
 		// Handle post data
 		$sPostMode = 'get';
 		$mPostData = null;
 		if ($xTypeHandler) {
 			$aData = $xTypeHandler($aParams, $this);
-			if (!empty($aData['post_mode']))
+			if (!empty($aData['post_mode'])) {
 				$sPostMode = $aData['post_mode'];
-			if (isset($aData['post_data']))
+			}
+			if (isset($aData['post_data'])) {
 				$mPostData = $aData['post_data'];
-			if (!empty($aData['params']))
+			}
+			if (!empty($aData['params'])) {
 				$aParams = array_merge($aParams, $aData['params']);
+			}
 		}
 		elseif ($aParams['post']) {
 			switch ($aParams['type']) {
@@ -311,12 +289,15 @@ class HttpClient
 					break;
 				case 'xml':
 					$sPostMode = 'data';
-					if (!$aParams['mime'])
+					if (!$aParams['mime']) {
 						$aParams['mime'] = 'application/xml';
-					if ($aParams['post'] instanceof DomDocument)
+					}
+					if ($aParams['post'] instanceof DomDocument) {
 						$mPostData = $aParams['post']->saveXML();
-					elseif ($aParams['post'] instanceof DomNode)
+					}
+					elseif ($aParams['post'] instanceof DomNode) {
 						$mPostData = $aParams['post']->ownerDocument->saveXML($aParams['post']);
+					}
 					else
 						$mPostData = strval($aParams['post']);
 					if (
@@ -332,12 +313,15 @@ class HttpClient
 					break;
 				case 'json':
 					$sPostMode = 'data';
-					if (!$aParams['mime'])
+					if (!$aParams['mime']) {
 						$aParams['mime'] = 'application/json';
-					if (is_array($aParams['post']))
+					}
+					if (is_array($aParams['post'])) {
 						$mPortData = json_encode($aParams['post']);
-					else
+					}
+					else {
 						$mPostData = strval($aParams['post']);
+					}
 					break;
 				case 'binary':
 					$sPostMode = 'data';
@@ -349,10 +333,12 @@ class HttpClient
 					break;
 				case 'multipart_complex':
 					$sPostMode = 'data';
-					if (!$aParams['mime'])
+					if (!$aParams['mime']) {
 						$aParams['mime'] = 'multipart/form-data';
-					if (preg_match('/;\s*boundary\s*=\s*=?([^\s"]+)/s', $aParams['mime'], $aMatches))
+					}
+					if (preg_match('/;\s*boundary\s*=\s*=?([^\s"]+)/s', $aParams['mime'], $aMatches)) {
 						$sBoundary = $aMatches[1];
+					}
 					else {
 						$sBoundary = md5(rand() . microtime());
 						$aParams['mime'] .= '; boundary="' . $sBoundary . '"';
@@ -360,12 +346,15 @@ class HttpClient
 					$mPostData = '';
 					$sEol = chr(13) . chr(10);
 					foreach ($aParams['post'] as $mKey => $aPart) {
-						if (!empty($aPart['content']))
+						if (!empty($aPart['content'])) {
 							$sPartBody = $aPart['content'];
-						elseif (!empty($aPart['file']))
+						}
+						elseif (!empty($aPart['file'])) {
 							$sPartBody = file_get_contents($aPart['file']);
-						else
+						}
+						else {
 							$sPartBody = '';
+						}
 						$aPartHeaders = array();
 						$sDisposition =
 							isset($aPart['disposition'])
@@ -383,14 +372,17 @@ class HttpClient
 								)
 							;
 							$sVal = 'Content-Disposition: ' . $sDisposition;
-							if ($sName)
+							if ($sName) {
 								$sVal .= '; name="' . $sName . '"';
-							if (!empty($aPart['file']))
+							}
+							if (!empty($aPart['file'])) {
 								$sVal .= '; filename="' . basename($aPart['file']) . '"';
+							}
 							$aPartHeaders[] = $sVal;
 						}
-						if (empty($aPart['mime']) && !empty($aPart['charset']))
+						if (empty($aPart['mime']) && !empty($aPart['charset'])) {
 							$aPart['mime'] = 'text/plain';
+						}
 						if (!empty($aPart['mime'])) {
 							$sVal = 'Content-Type: ' . $aPart['mime'];
 							if (!empty($aPart['charset'])) {
@@ -398,8 +390,9 @@ class HttpClient
 							}
 							$aPartHeaders[] = $sVal;
 						}
-						if (!empty($aPart['headers']))
+						if (!empty($aPart['headers'])) {
 							$aPartHeaders = array_merge($aPartHeaders, $aPart['headers']);
+						}
 						$mPostData .=
 							'--' . $sBoundary . $sEol
 							. implode($sEol, $aPartHeaders) . $sEol
@@ -428,8 +421,9 @@ class HttpClient
 		}
 
 		// Assemble per-request cURL settings
-		if ($xParser)
+		if ($xParser) {
 			$aParams['url'] = $xParser($aParams['url'], true, $this);
+		}
 		$aOptions = array(
 			// bool
 			CURLOPT_FOLLOWLOCATION => $aParams['max_redirects'] ? true : false,
@@ -443,45 +437,55 @@ class HttpClient
 			CURLOPT_URL => $aParams['url'],
 			CURLOPT_USERAGENT => $aParams['agent']
 		);
-		if ($aParams['ssl_ca_file'])
+		if ($aParams['ssl_ca_file']) {
 			$aOptions[CURLOPT_CAINFO] = $aParams['ssl_ca_file'];
-		if ($aParams['ssl_ca_path'])
+		}
+		if ($aParams['ssl_ca_path']) {
 			$aOptions[CURLOPT_CAPATH] = $aParams['ssl_ca_path'];
-		if ($aParams['auth'])
+		}
+		if ($aParams['auth']) {
 			$aOptions[CURLOPT_USERPWD] = $aParams['auth'];
+		}
 		if ($aParams['close_connection']) {
 			$aOptions[CURLOPT_FORBID_REUSE] = true;
 			$aParams['headers'][] = 'Connection: close';
 		}
-		else
+		else {
 			$aOptions[CURLOPT_FORBID_REUSE] = false;
-		if ($aParams['referer'])
+		}
+		if ($aParams['referer']) {
 			$aOptions[CURLOPT_REFERER] = $aParams['referer'];
-		if ($aParams['track_cookies'])
+		}
+		if ($aParams['track_cookies']) {
 			$aOptions[CURLOPT_COOKIEFILE] = tempnam("/tmp", "COOKIE");
-		else
+		}
+		else {
 			$aOptions[CURLOPT_COOKIE] = null;
+		}
 		switch ($sPostMode) {
 			case 'get':
 				$aOptions[CURLOPT_HTTPGET] = true;
 				$sHttpMethod = 'GET';
 				break;
 			case 'form':
-				if ($xParser)
+				if ($xParser) {
 					$mPostData = $xParser($mPostData, true, $this);
+				}
 				$aOptions[CURLOPT_POST] = true;
 				$aOptions[CURLOPT_POSTFIELDS] = $mPostData;
 				$sHttpMethod = 'POST';
 				break;
 			case 'data':
-				if ($xParser)
+				if ($xParser) {
 					$mPostData = $xParser($mPostData, false, $this);
+				}
 				$aOptions[CURLOPT_POSTFIELDS] = $mPostData;
 				$sHttpMethod = 'POST';
 				break;
 			case 'file':
-				if ($xParser)
+				if ($xParser) {
 					$mPostData = $xParser($mPostData, false, $this);
+				}
 				$aOptions[CURLOPT_PUT] = true;
 				$aOptions[CURLOPT_INFILESIZE] = filesize($mPostData);
 				$aOptions[CURLOPT_INFILE] = fopen($mPostData, 'r');
@@ -489,8 +493,9 @@ class HttpClient
 				$aOptions[CURLOPT_CUSTOMREQUEST] = $sHttpMethod = 'POST';
 				break;
 		}
-		if ($aParams['http_method'])
+		if ($aParams['http_method']) {
 			$aOptions[CURLOPT_CUSTOMREQUEST] = $sHttpMethod = $aParams['http_method'];
+		}
 		$this->xDownloadCallback = null;
 		if ($aParams['download']) {
 			$aOptions[CURLOPT_HEADER] = false;
@@ -510,10 +515,11 @@ class HttpClient
 			$aOptions[CURLOPT_HEADER] = true;
 			$aOptions[CURLOPT_RETURNTRANSFER] = true;
 		}
-		if ($aParams['headers'])
+		if ($aParams['headers']) {
 			$aOptions[CURLOPT_HTTPHEADER] = $aParams['headers'];
+		}
 
-		// Initialize cURL session for this object
+		// Initialize cURL resource for this object
 		if (!$this->rCurl) {
 			// Create cURL resource
 			$this->rCurl = curl_init();
@@ -531,13 +537,15 @@ class HttpClient
 		if ($xParser) {
 			foreach ($aOptions as $iKey => &$mValue) {
 				if (is_array($mValue)) {
-					foreach ($mValue as &$mSubVal)
+					foreach ($mValue as &$mSubVal) {
 						$mSubVal = $xParser($mSubVal, false, $this);
+					}
 					unset($mSubVal);
 				}
 				elseif (is_string($mValue)) {
-					if ($iKey == CURLOPT_POSTFIELDS || $iKey == CURLOPT_URL)
+					if ($iKey == CURLOPT_POSTFIELDS || $iKey == CURLOPT_URL) {
 						continue;
+					}
 					$mValue = $xParser($mValue, false, $this);
 				}
 			}
@@ -551,8 +559,9 @@ class HttpClient
 		$sResponseContent = curl_exec($this->rCurl);
 
 		// Close input file
-		if ($sPostMode == 'file')
+		if ($sPostMode == 'file') {
 			fclose($aOptions[CURLOPT_INFILE]);
+		}
 
 		// Get request results data
 		$aCurlResult = curl_getinfo($this->rCurl);
@@ -640,7 +649,7 @@ class HttpClient
 			}
 		}
 
-		// Set session "last error"
+		// Set instance "last error"
 		$this->sHttpError = $sError;
 
 		// Assemble result data
@@ -666,8 +675,9 @@ class HttpClient
 			$aResults['post_data'] = self::queryToArray($mPostData, null);
 			$aResults['post_raw'] = $mPostData;
 		}
-		else
+		else {
 			$aResults['post_data'] = $mPostData;
+		}
 
 		// Log message
 		if ($xLogger) {
@@ -683,15 +693,17 @@ class HttpClient
 				if ($aParams['ignore_failure'])
 					$sMessage .= ' - IGNORING FAIL';
 			}
-			else
+			else {
 				$sMessage .= ' - OK';
+			}
 			$xLogger($sMessage, $aResults, $this);
 		}
 
 		// Return response content
 		if ($bSuccess || $aParams['ignore_failure']) {
-			if ($aParams['download'])
+			if ($aParams['download']) {
 				return true;
+			}
 			return $sResponseContent;
 		}
 
@@ -702,21 +714,14 @@ class HttpClient
 	/**
 	 * Perform a sequence of HTTP requests
 	 *
-	 * Execute a series of HTTP requests.
-	 *
-	 * Each element in the call data array causes an HTTP request to be made, using the element
-	 *  value as an array of call parameters, exactly as per call().
+	 * Each element in the call data array causes an HTTP request to be made, using the element value as an array of call parameters, exactly as per call().
 	 * Requests are executed one at a time, in array order.
-	 * The result data array is populated in the same order, and using the same key as the call
-	 *  data element.
+	 * The result data array is populated in the same order, and using the same key as the call data element.
 	 *
-	 * If a request fails (call() returns false) then the sequence is stopped, no further requests
-	 *  are made.
+	 * If a request fails (call() returns false) then the sequence is stopped, no further requests are made.
 	 *
-	 * @param array $aCallData sequence of calls to execute. Each element is an array of call-time
-	 *  call parameters
-	 * @param array-ref &$aResultData variable is populated with call results. Each element is an
-	 *  array of call results, per $aResults param from call()
+	 * @param array $aCallData sequence of calls to execute. Each element is an array of call-time call parameters
+	 * @param array-ref &$aResultData variable is populated with call results. Each element is an array of call results, per $aResults param from call()
 	 * @return bool true on success (all calls succeeded), false on failure
 	 */
 	public function sequence($aCallData, &$aResultData = null)
@@ -726,8 +731,9 @@ class HttpClient
 			$aResults = null;
 			$sResponseContent = $this->call($aParams, $aResults);
 			$aResultData[$mKey] = $aResults;
-			if ($sResponseContent === false)
+			if ($sResponseContent === false) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -735,8 +741,7 @@ class HttpClient
 	/**
 	 * Return description of HTTP error from most recent call
 	 *
-	 * @return string http error description, or null if there was no error during the most recent
-	 *  call
+	 * @return string http error description, or null if there was no error during the most recent call
 	 */
 	public function httpError()
 	{
@@ -903,8 +908,9 @@ class HttpClient
 						break;
 					case 'path':
 						$aFinal['path'] = strval($mValue);
-						if (substr($aFinal['path'], 0, 1) != '/')
+						if (substr($aFinal['path'], 0, 1) != '/') {
 							$aFinal['path'] = '/' . $aFinal['path'];
+						}
 						break;
 					case 'type':
 						$mValue = strtolower($mValue);
@@ -912,8 +918,9 @@ class HttpClient
 							$aFinal['type'] = null;
 							$aFinal['post'] = $aNew['post'] = false;
 						}
-						else
+						else {
 							$aFinal['type'] = $mValue;
+						}
 						break;
 					case 'referer':
 					case 'referrer':
@@ -924,20 +931,23 @@ class HttpClient
 						if ($mValue) {
 							if (is_array($mValue)) {
 								foreach ($mValue as $mKey => $mVal) {
-									if (is_numeric($mKey))
+									if (is_numeric($mKey)) {
 										$aTemp[] = $mVal;
+									}
 									elseif (is_array($mVal)) {
 										foreach ($mVal as $sVal)
 											$aTemp[] = $mKey . ': ' . trim($sVal);
 									}
-									else
+									else {
 										$aTemp[] = $mKey . ': ' . trim($mVal);
+									}
 								}
 							}
 							else {
 								foreach (preg_split('/\s*\n+\s*/', $mValue) as $sLine) {
-									if (!$sLine)
+									if (!$sLine) {
 										continue;
+									}
 									$aTemp[] = $sLine;
 								}
 							}
@@ -946,7 +956,6 @@ class HttpClient
 						break;
 					case 'http_method':
 						$aFinal['http_method'] = strtoupper(trim(strval($mValue)));
-						break;
 						break;
 				}
 			}
@@ -998,8 +1007,9 @@ class HttpClient
 		$aQueryData = array();
 		$aProcessData = null;
 		// already an array, each element is one var=>val pair
-		if (is_array($mValue))
+		if (is_array($mValue)) {
 			$aQueryData = $mValue;
+		}
 		// multiline text, each line is one "var=val" pair
 		elseif (is_string($mValue) && strpos($mValue, PHP_EOL) !== false) {
 			$aProcessData = preg_split('/[\r\n]+/', trim($mValue));
@@ -1015,8 +1025,9 @@ class HttpClient
 			$aProcessData = explode('&', trim($mValue));
 		}
 		// not a normal query string
-		else
+		else {
 			$aQueryData[strval($mValue)] = null;
+		}
 		if ($aProcessData) {
 			foreach ($aProcessData as $sTemp) {
 				if (strpos($sTemp, '=') !== false) {
@@ -1028,28 +1039,35 @@ class HttpClient
 					$sName = rawurldecode($sTemp);
 					$sValue = null;
 				}
-				if ($sName == '')
+				if ($sName == '') {
 					continue;
-				if (array_key_exists($sName, $aQueryData)) {
-					if (is_array($aQueryData[$sName]))
-						$aQueryData[$sName][] = $sValue;
-					else
-						$aQueryData[$sName] = array( $aQueryData[$sName], $sValue );
 				}
-				else
+				if (array_key_exists($sName, $aQueryData)) {
+					if (is_array($aQueryData[$sName])) {
+						$aQueryData[$sName][] = $sValue;
+					}
+					else {
+						$aQueryData[$sName] = array( $aQueryData[$sName], $sValue );
+					}
+				}
+				else {
 					$aQueryData[$sName] = $sValue;
+				}
 			}
 		}
 		if ($aExtraData) {
 			foreach ($aExtraData as $sName => $sValue) {
 				if (array_key_exists($sName, $aQueryData)) {
-					if (is_array($aQueryData[$sName]))
+					if (is_array($aQueryData[$sName])) {
 						$aQueryData[$sName][] = $sValue;
-					else
+					}
+					else {
 						$aQueryData[$sName] = array( $aQueryData[$sName], $sValue );
+					}
 				}
-				else
+				else {
 					$aQueryData[$sName] = $sValue;
+				}
 			}
 		}
 		return $aQueryData;
@@ -1064,8 +1082,9 @@ class HttpClient
 	 */
 	public static function _curlRead($rCurl, $rFile, $iMaxBytes)
 	{
-		if (feof($rFile))
+		if (feof($rFile)) {
 			return '';
+		}
 		return fread($rFile, $iMaxBytes);
 	}
 
@@ -1087,8 +1106,9 @@ class HttpClient
 	public function _curlWrite($rCurl, $sContent)
 	{
 		$xWrite = $this->xDownloadCallback;
-		if (!$xWrite($sContent))
+		if (!$xWrite($sContent)) {
 			return false;
+		}
 		return strlen($sContent);
 	}
 
@@ -1099,7 +1119,8 @@ class HttpClient
 	 */
 	public function __destruct()
 	{
-		if ($this->rCurl)
+		if ($this->rCurl) {
 			@curl_close($this->rCurl);
+		}
 	}
 }
