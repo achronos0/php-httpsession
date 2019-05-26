@@ -62,7 +62,7 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function get($mKey)
 	{
-		return isset($this->aValue[$mKey]) ? $this->aValue[$mKey] : null;
+		return isset($this->aOrder[$mKey]) ? $this->aValue[$mKey] : null;
 	}
 
 	/**
@@ -73,7 +73,7 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function getOrder($mKey)
 	{
-		return isset($this->aValue[$mKey]) ? $this->aOrder[$mKey] : null;
+		return isset($this->aOrder[$mKey]) ? $this->aOrder[$mKey] : null;
 	}
 
 	/**
@@ -84,7 +84,7 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 	 */
 	public function has($mKey)
 	{
-		return array_key_exists($mKey, $this->aValue);
+		return isset($this->aOrder[$mKey]);
 	}
 
 	/**
@@ -369,14 +369,14 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 		$mOrder = null;
 		if (is_array($mValue)) {
 			if (
-				isset($mValue['key'])
+				array_key_exists('key', $mValue)
 				&& (is_scalar($mValue['key']) || $mValue['key'] === null)
 			) {
 				$mKey = $mValue['key'];
 				unset($mValue['key']);
 			}
 			if (
-				isset($mValue['order'])
+				array_key_exists('order', $mValue)
 				&& (is_scalar($mValue['order']) || $mValue['order'] === null)
 			) {
 				$mOrder = $mValue['order'];
@@ -409,6 +409,7 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 	 *
 	 * @internal
 	 * @param (string|int) $mKey key
+	 * @param bool $bSetValue whether to overwrite existing value
 	 * @param mixed $mValue value
 	 * @param int $mOrder order index
 	 * @return void
@@ -423,13 +424,12 @@ class SequenceArray implements ArrayAccess, Countable, IteratorAggregate
 					$mKey = $mMax + 1;
 				}
 			}
-			$bExists = false;
 		}
-		elseif (isset($this->aValue[$mKey])) {
+		elseif (isset($this->aOrder[$mKey])) {
 			if (!$bSetValue) {
 				$mValue = $this->aValue[$mKey];
 			}
-			if ($mOrder === null) {
+			if ($bSetValue && $mOrder === null) {
 				$mOrder = $this->aOrder[$mKey];
 			}
 		}

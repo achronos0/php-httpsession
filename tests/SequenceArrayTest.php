@@ -142,26 +142,19 @@ class SequenceArrayTest extends TestCase
 		$this->assertEquals(null, $oSeq->get('f'));
 		$this->assertEquals(50, $oSeq->getOrder('f'));
 
-		$oSeq['g']['ga'] = 'autosubarray';
-		$this->assertEquals(true, $oSeq->has('g'));
-		$this->assertEquals(true, isset($oSeq['g']));
-		$this->assertEquals(true, isset($oSeq['g']['ga']));
-		$this->assertEquals('autosubarray', $oSeq['g']['ga']);
-		$this->assertEquals(51, $oSeq->getOrder('g'));
-
 		$oSeq->set(10, 'a');
 		$this->assertEquals(true, $oSeq->has(10));
 		$this->assertEquals(true, isset($oSeq[10]));
 		$this->assertEquals('a', $oSeq->get(10));
 		$this->assertEquals('a', $oSeq[10]);
-		$this->assertEquals(52, $oSeq->getOrder(10));
+		$this->assertEquals(51, $oSeq->getOrder(10));
 
 		$oSeq->set(null, 'b');
 		$this->assertEquals(true, $oSeq->has(11));
 		$this->assertEquals(true, isset($oSeq[11]));
 		$this->assertEquals('b', $oSeq->get(11));
 		$this->assertEquals('b', $oSeq[11]);
-		$this->assertEquals(53, $oSeq->getOrder(11));
+		$this->assertEquals(52, $oSeq->getOrder(11));
 
 		$oSeq[''] = 'empty string';
 		$oSeq['@'] = 60;
@@ -208,19 +201,17 @@ class SequenceArrayTest extends TestCase
 		$this->assertEquals(4, $oSeq->count());
 		$this->assertEquals(1, $oSeq->get('a'));
 		$this->assertEquals(array(2), $oSeq->get('b'));
-		$this->assertEquals('va', $oSeq->get(11));
-		$this->assertEquals('vb', $oSeq->get(12));
+		$this->assertEquals('va', $oSeq->get(10));
+		$this->assertEquals('vb', $oSeq->get(11));
 
 		$oSeq = new SequenceArray($aData);
 		$this->assertEquals(4, $oSeq->count());
 		$this->assertEquals(1, $oSeq->get('a'));
 		$this->assertEquals(array(2), $oSeq->get('b'));
-		$this->assertEquals('va', $oSeq->get(11));
-		$this->assertEquals('vb', $oSeq->get(12));
+		$this->assertEquals('va', $oSeq->get(10));
+		$this->assertEquals('vb', $oSeq->get(11));
 
-		$oSeq = new SequenceArray();
-
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => 'va',
 			'@a' => 10,
 			'b' => array('vb'),
@@ -240,7 +231,7 @@ class SequenceArrayTest extends TestCase
 		$this->assertEquals(30, $oSeq->getOrder('c'));
 		$this->assertEquals(40, $oSeq->getOrder(10));
 
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => array(
 				'order' => 100,
 				'value' => 'va',
@@ -278,7 +269,6 @@ class SequenceArrayTest extends TestCase
 		$this->assertEquals('ve', $oSeq->get(11));
 		$this->assertEquals('vf', $oSeq->get(12));
 		$this->assertEquals(array( 'value' => 1, 'value2' => 2), $oSeq->get('d'));
-
 		$this->assertEquals(100, $oSeq->getOrder('a'));
 		$this->assertEquals(110, $oSeq->getOrder('b'));
 		$this->assertEquals(120, $oSeq->getOrder('c'));
@@ -290,9 +280,7 @@ class SequenceArrayTest extends TestCase
 
     public function testGetArray()
     {
-		$oSeq = new SequenceArray();
-
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => 'va',
 			'@a' => 10,
 			'b' => array('vb'),
@@ -306,7 +294,7 @@ class SequenceArrayTest extends TestCase
     	$this->assertEquals(
     		array(
     			'a' => 'va',
-    			'b' => 'vb',
+    			'b' => array('vb'),
     			'c' => 'vc',
     			10 => 'vd',
     		),
@@ -333,7 +321,7 @@ class SequenceArrayTest extends TestCase
     			'b' => array(
     				'key' => 'b',
     				'order' => 20,
-    				'value' => 'vb',
+    				'value' => array('vb'),
     			),
     			'c' => array(
     				'key' => 'c',
@@ -352,9 +340,7 @@ class SequenceArrayTest extends TestCase
 
     public function testEmpty()
     {
-		$oSeq = new SequenceArray();
-
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => 'va',
 			'@a' => 10,
 			'b' => array('vb'),
@@ -374,9 +360,7 @@ class SequenceArrayTest extends TestCase
 
     public function testClone()
     {
-		$oSeq = new SequenceArray();
-
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => 'va',
 			'@a' => 10,
 			'b' => array('vb'),
@@ -423,9 +407,7 @@ class SequenceArrayTest extends TestCase
 
     public function testIterate()
     {
-		$oSeq = new SequenceArray();
-
-		$oSeq->setArray(array(
+		$oSeq = new SequenceArray(array(
 			'a' => 'va',
 			'@a' => 10,
 			'b' => 'vb',
