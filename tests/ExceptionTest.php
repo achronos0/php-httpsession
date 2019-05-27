@@ -14,47 +14,54 @@ class ExceptionTest extends TestCase
 
 		$e1 = new \Exception('first');
 
+		$e = new \Useful\Exception('test', 2, $e1);
+		$this->assertEquals($e1, $e->getPreviousException());
+		$this->assertEquals(null, $e->getData());
+
+		$e = new \Useful\Exception('test', 2, 'data');
+		$this->assertEquals(null, $e->getPreviousException());
+		$this->assertEquals('data', $e->getData());
+
+		$e = new \Useful\Exception('test', 2, null, $e1);
+		$this->assertEquals($e1, $e->getPreviousException());
+		$this->assertEquals(null, $e->getData());
+
+		$e = new \Useful\Exception('test', 2, null, 'data');
+		$this->assertEquals(null, $e->getPreviousException());
+		$this->assertEquals('data', $e->getData());
+
 		$e = new \Useful\Exception('test', 2, $e1, 'data');
 		$this->assertEquals($e1, $e->getPreviousException());
 		$this->assertEquals('data', $e->getData());
-		$this->assertEquals(null, $e->getData('foo'));
+
+		$e = new \Useful\Exception('test', 2, 'data', $e1);
+		$this->assertEquals($e1, $e->getPreviousException());
+		$this->assertEquals('data', $e->getData());
 
 		$e = new \Useful\Exception(
 			'test',
 			2,
-			null,
 			array(
+				'a' => 'data',
 				'exception' => $e1,
 			)
 		);
 		$this->assertEquals($e1, $e->getPreviousException());
+		$this->assertEquals(array('a' => 'data'), $e->getData());
+		$this->assertEquals('data', $e->getData('a'));
+		$this->assertEquals(null, $e->getData('b'));
+
 		$e = new \Useful\Exception(
 			'test',
 			2,
-			null,
 			array(
+				'a' => 'data',
 				'error' => $e1,
 			)
 		);
 		$this->assertEquals($e1, $e->getPreviousException());
-		$e = new \Useful\Exception(
-			'test',
-			2,
-			array(
-				'exception' => $e1,
-			)
-		);
-		$this->assertEquals($e1, $e->getPreviousException());
-
-		$e = new \Useful\Exception(
-			'test',
-			2,
-			array(
-				'exception' => $e1,
-				'foo' => 'bar',
-			)
-		);
-		$this->assertEquals($e1, $e->getPreviousException());
-		$this->assertEquals('bar', $e->getData('foo'));
+		$this->assertEquals(array('a' => 'data'), $e->getData());
+		$this->assertEquals('data', $e->getData('a'));
+		$this->assertEquals(null, $e->getData('b'));
     }
 }
