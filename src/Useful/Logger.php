@@ -867,8 +867,7 @@ class Logger
 				? TextPatterns::formatNumber($aMessage['ftime'], $aFormat['ftime_format'])
 				: null,
 			'log' => $aMessage['log'],
-			'level' => $this->
-			getLevelDisplay($aMessage['level']),
+			'level' => $this->getLevelDisplay($aMessage['level']),
 			'msg' => $aMessage['msg'],
 			'timer' =>
 				($aMessage['timer'] && $aFormat['timer_format'])

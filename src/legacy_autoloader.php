@@ -75,16 +75,14 @@ foreach ($LEGACY_AUTOLOADER['ns'] as $sNamespace => $sSourceDir) {
 	);
 }
 
+// Install PHP autoloader function
 if (function_exists('spl_autoload_register')) {
 	// Install SPL autoloader (PHP 5.1+)
 	Useful_Legacy_Loader::registerSplAutoloader();
 }
 else {
 	// Install __autoload (PHP 5.0)
-	function __autoload($sClassName)
-	{
-		Useful_Legacy_Loader::loadClass($sClassName);
-	}
+	require_once("$sUsefulDir/src/legacy_autoloader_50.php");
 }
 
 // Remove global var

@@ -399,6 +399,9 @@ class TextPatterns
 	public static function interpolate($sTemplate, $aData)
 	{
 		foreach ($aData as $sKey => $mValue) {
+			if ($mValue === null) {
+				$mValue = '';
+			}
 			if (is_scalar($mValue)) {
 				$sTemplate = str_replace('{' . $sKey . '}', $mValue, $sTemplate);
 			}

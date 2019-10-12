@@ -572,7 +572,45 @@ class LoggerTest extends TestCase
 		$oLogger = new Logger($aOriginalConfig);
 
 		$oLog = $oLogger->getLog('test_log');
-		
+		$this->assertLogInstance($oLog, $oLogger);
+	}
+
+	public function testLogFactoryClass()
+	{
+		$aOriginalConfig = array(
+			'logs' => array(
+				'test_log' => array(
+					'mask' => 'info',
+					'writers' => array('display'),
+				),
+			),
+			'default_log_config' => array(
+				'mask' => 'error',
+				'writers' => array('file'),
+			),
+		);
+		$oLogger = new Logger($aOriginalConfig);
+
+		$oLogFactory = new \Useful\Logger\LogFactory();
+		$this->assertInstanceOf(
+			\Useful\Logger\LogFactory::class,
+			$oLogFactory,
+			'new LogFactory()'
+		);
+
+		$oLogFactory->setLogger($oLogger);
+		$this->assertEquals(
+			$oLogger,
+			$oLogFactory->getLogger(),
+			'LogFactory->getLogger()'
+		);
+
+		$oLog = $oLogFactory->createLog('test_log');
+		$this->assertLogInstance($oLog, $oLogger);
+	}
+
+	protected function assertLogInstance($oLog, $oLogger)
+	{
 		$this->assertInstanceOf(
 			\Useful\Logger\Log::class,
 			$oLog,

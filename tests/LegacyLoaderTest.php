@@ -53,7 +53,7 @@ class LegacyLoaderTest extends TestCase
 		$this->assertEquals('1999', $oDate->year());
 
 		Useful_Legacy_Loader::clearCache();
-		$sDir = dirname(__DIR__) . '/lsrc';
+		$sDir = dirname(__DIR__) . '/legacy_src';
 		foreach (scandir($sDir) as $sFile) {
 			if (in_array($sFile, array('.', '..'))) {
 				continue;

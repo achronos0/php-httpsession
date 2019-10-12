@@ -34,7 +34,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function emergency($sMessage, $aContext = array(), $fStartTimer = null)
+	public function emergency($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->log('emergency', $sMessage, $aContext);
 	}
@@ -51,7 +51,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function alert($sMessage, $aContext = array(), $fStartTimer = null)
+	public function alert($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('alert', $sMessage, $aContext);
 	}
@@ -68,7 +68,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function critical($sMessage, $aContext = array(), $fStartTimer = null)
+	public function critical($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('critical', $sMessage, $aContext);
 	}
@@ -83,7 +83,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function error($sMessage, $aContext = array(), $fStartTimer = null)
+	public function error($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('error', $sMessage, $aContext);
 	}
@@ -100,7 +100,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function warning($sMessage, $aContext = array(), $fStartTimer = null)
+	public function warning($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('warning', $sMessage, $aContext);
 	}
@@ -115,7 +115,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function notice($sMessage, $aContext = array(), $fStartTimer = null)
+	public function notice($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('notice', $sMessage, $aContext);
 	}
@@ -132,7 +132,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function info($sMessage, $aContext = array(), $fStartTimer = null)
+	public function info($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('info', $sMessage, $aContext);
 	}
@@ -151,7 +151,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function detail($sMessage, $aContext = array(), $fStartTimer = null)
+	public function detail($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('detail', $sMessage, $aContext);
 	}
@@ -166,7 +166,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function debug($sMessage, $aContext = array(), $fStartTimer = null)
+	public function debug($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('debug', $sMessage, $aContext);
 	}
@@ -183,7 +183,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function debug2($sMessage, $aContext = array(), $fStartTimer = null)
+	public function debug2($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('debug2', $sMessage, $aContext);
 	}
@@ -200,7 +200,7 @@ class Log implements LoggerInterface
 	 * @param float $fStartTimer calculate duration using this time offset
 	 * @return void
 	 */
-	public function debug3($sMessage, $aContext = array(), $fStartTimer = null)
+	public function debug3($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
 		$this->write('debug3', $sMessage, $aContext);
 	}
