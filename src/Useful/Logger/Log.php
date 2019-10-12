@@ -214,7 +214,7 @@ class Log implements LoggerInterface
      * @return void
      * @throws \Psr\Log\InvalidArgumentException on invalid level
      */
-    public function log($sLevel, $sMessage, $aContext = array())
+    public function log($sLevel, $sMessage, array $aContext = array())
     {
     	try {
 			$this->write($sLevel, $sMessage, $aContext);
