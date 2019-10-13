@@ -1,6 +1,6 @@
 <?php
 /**
- * \Useful\Logger\Writer\File class
+ * \Useful\Logger\Writer\Csv class
  *
  * @link https://github.com/morvren-achronos/php-useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
@@ -9,10 +9,10 @@
 
 namespace Useful\Logger\Writer;
 
-use Useful\Logger\AbstractFileWriter;
+use /*Useful\Csv,*/ Useful\Logger\AbstractFileWriter, Useful\TextPatterns;
 
 /**
- * Write messages to plain-text file
+ * Write messages to CSV file
  *
  * Writer settings:
  *     string `path` - Filepath to write log messages to.
@@ -23,7 +23,7 @@ use Useful\Logger\AbstractFileWriter;
  *             `"{minute}"` - Replaced by the current two-digit minute.
  *         The directory will be created if it does not exist.
  *         The file will be created if it does not exist, or appended to if it does exist.
- *         Default is `"./logs/{log}.log"`
+ *         Default is `"./logs/{log}.csv"`
  *     string `queue` - Controls how internal queueing system operates.
  *         Default for this writer is `log`, which maintains a separate queue for each log name.
  *         If you want to combine all messages into a single file regardless of source, change to queue=single
@@ -32,9 +32,11 @@ use Useful\Logger\AbstractFileWriter;
  *         Default for this writer is TRUE, when a queue is full it is flushed to disk.
  * See {@link \Useful\Logger\AbstractQueuedWriter} for more details on `queue`, `max_messages` and `autoflush` queueing options.
  *
+ * @uses \Useful\Csv
  * @uses \Useful\Logger\AbstractFileWriter
+ * @uses \Useful\TextPatterns
  */
-class File extends AbstractFileWriter
+class Csv extends AbstractFileWriter
 {
 	//////////////////////////////
 	// Implement AbstractFileWriter
@@ -46,7 +48,7 @@ class File extends AbstractFileWriter
 	 */
 	protected static function getDefaultPath()
 	{
-		return './logs/{log}.log';
+		return './logs/{log}.csv';
 	}
 	
 	/**
@@ -58,10 +60,57 @@ class File extends AbstractFileWriter
 	 */
 	protected function writeMessagesToFile($sPath, $aMessageList)
 	{
-		$sFileContent = '';
+		global $argv;
+
+		// Define column names
+		$aColumns = array(
+			'date',
+			'time',
+			'log',
+			'level',
+			'message',
+			'timer',
+			'request_uri',
+			'request_id',
+			'pid',
+			'data'
+		);
+
+		// Prepare CSV records
+		$aRecords = array();
 		foreach ($aMessageList as $aMessage) {
-			$sFileContent .= $this->oLogger->formatMessage($aMessage, isset($this->aConfig['format']) ? $this->aConfig['format'] : array());
+			$aRecords[] = array(
+				date('Y-m-d', $aMessage['time']),
+				date('H:i:s', $aMessage['time']),
+				$aMessage['log'],
+				$this->oLogger->getLevelLabel($aMessage['level']),
+				$aMessage['msg'],
+				$aMessage['timer'] ? $aMessage['timer'] : '',
+				(PHP_SAPI == 'cli') ? ('cli:' . implode(' ', $argv)) : $_SERVER['REQUEST_URI'],
+				$this->oLogger->getSessionId(),
+				getmypid(),
+				$aMessage['data']
+					? (
+						(
+							is_string($aMessage['data'])
+							|| is_numeric($aMessage['data'])
+						)
+						? $aMessage['data']
+						: TextPatterns::dump($aMessage['data'], false, 'pretty')
+					)
+					: ''
+					,
+			);
 		}
-		file_put_contents($sPath, $sFileContent, FILE_APPEND);
+
+		// Write data to file using Csv class
+		\Useful\Csv::append(
+			$sPath,
+			$aRecords,
+			array(
+				'associative' => false,
+				'column_names' => $aColumns,
+			)
+		);
 	}
 }

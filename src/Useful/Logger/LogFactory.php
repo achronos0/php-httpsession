@@ -11,6 +11,11 @@ namespace Useful\Logger;
 
 use Useful\Logger;
 
+/**
+ * Create named log receivers
+ *
+ * @uses \Useful\Logger
+ */
 class LogFactory
 {
 	protected $oLogger;
@@ -57,7 +62,7 @@ class LogFactory
 	 *
 	 * If a logger has been explicitly set using {@link setLogger}, that instance is returned,
 	 *
-	 * If no logger has been set, returns the default logger, as per `\Useful\Logger::getLogger()`
+	 * If no logger has been set, returns the default logger, i.e. same as `\Useful\Logger::getLogger()`
 	 *
 	 * @api
 	 * @return \Useful\Logger logger instance

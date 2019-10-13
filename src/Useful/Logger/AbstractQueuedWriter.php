@@ -41,7 +41,8 @@ abstract class AbstractQueuedWriter extends AbstractWriter
 	 * @api
 	 * @return array config settings map
 	 */
-	protected function getDefaultConfig() {
+	protected function getDefaultConfig()
+	{
 		return array(
 			'queue' => 'single',
 			'max_messages' => 100,

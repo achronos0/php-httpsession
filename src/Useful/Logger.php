@@ -406,6 +406,7 @@ class Logger
 			'all'       => 'All',
 		),
 		'log_class' => '\\Useful\\Logger\\Log',
+		'writer_namespace' => '\\Useful\\Logger\\Writer',
 	);
 	protected $iMaxLevelMask = 0x07FF;
 	protected $aLogs = array();
@@ -703,7 +704,10 @@ class Logger
 					unset($aWriterConfig['class']);
 				}
 				else {
-					$sClassName = '\\Useful\\Logger\\Writer\\' . ucfirst($sWriter);
+					$sClassName = ucfirst($sWriter);
+				}
+				if (strpos('\\', $sClassName) === false) {
+					$sClassName = $this->aConfig['writer_namespace'] . '\\' . $sClassName;
 				}
 				if (!class_exists($sClassName, true)) {
 					throw new Exception("Invalid log writer class $sClassName");

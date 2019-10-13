@@ -95,7 +95,8 @@ Each writer does something different with messages: show it, write it to file, e
 Standard writers included with Logger are:
 * `callback` - Send messages to externally provided callback function.
 * `display` - Output messages immediately to console or page.
-* `file` - Write messages to CSV file.
+* `file` - Write messages to file as plain-text.
+* `csv` - Write messages to file as CSV.
 * `redirect` - Send messages to other named logs.
 * `trace` - Display log messages in an HTML comment block.
 
@@ -182,7 +183,7 @@ $oLogger->setOptions(array(
 	'writers' => array(
 		'file' => array(
 			'enabled' => true,
-			'path' => './logs/{log}/{date}/log_{hour}.csv',
+			'path' => './logs/{log}/{date}/log_{hour}.txt',
 		),
 	),
 	'default_log_config' => array(
@@ -209,7 +210,7 @@ $oLogger->setWriterConfig(
 	'file',
 	array(
 		'enabled' => true,
-		'path' => './logs/{log}/{date}/log_{hour}.csv',
+		'path' => './logs/{log}/{date}/log_{hour}.txt',
 	)
 );
 ```
@@ -365,6 +366,24 @@ Writer config settings:
 
 See below for details.
 
+### Csv
+
+Write messages to CSV file.
+
+Writer config settings:
+* string `path` - Filepath to write log messages to. Default is `"./logs/{log}.csv"`
+* `queue`, `max_messages`, `autoflush` - This is a queued writer, default `queue=log`. See below for details on queue management config settings.
+
+The provided path may contain placeholders:
+* `"{log}"` - Replaced by the message's log name. If queue=single this is the string `"combined"`.
+* `"{date}"` - Replaced by the current date, in YYYYMMDD format.
+* `"{hour}"` - Replaced by the current two-digit hour in 24-hour format.
+* `"{minute}"` - Replaced by the current two-digit minute.
+
+The directory will be created if it does not exist.
+
+The file will be created if it does not exist, or appended to if it does exist.
+
 ### Display
 
 Output messages immediately to console or page.
@@ -374,10 +393,10 @@ Writer config settings:
 
 ### File
 
-Write messages to CSV file.
+Write messages to plain-text file.
 
 Writer config settings:
-* string `path` - Filepath to write log messages to. Default is `"./logs/{log}.csv"`
+* string `path` - Filepath to write log messages to. Default is `"./logs/{log}.txt"`
 * `queue`, `max_messages`, `autoflush` - This is a queued writer, default `queue=log`. See below for details on queue management config settings.
 
 The provided path may contain placeholders:
@@ -432,7 +451,7 @@ $oLogger->setConfig(array(
 			'path' => './logs/{log}/{date}.csv',
 		),
 		'error_file' => array(
-			'class' => '\\Useful\\Logger\\Writer\\File',
+			'class' => 'File', // or specify fully qualified classname '\\Useful\\Logger\\Writer\\File'
 			'path' => './logs/{log}/{date}/log_{hour}.csv',
 		),
 	),

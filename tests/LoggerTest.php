@@ -392,7 +392,7 @@ class LoggerTest extends TestCase
 			'logs' => array(
 				'test_log' => array(
 					'mask' => 'debug',
-					'writers' => array('file'),
+					'writers' => array('csv'),
 				),
 			),
 		);
@@ -401,7 +401,7 @@ class LoggerTest extends TestCase
 		$this->assertEquals(
 			array(
 				'mask' => (self::L_DEBUG << 1) - 1,
-				'writers' => array('file'),
+				'writers' => array('csv'),
 				'log' => 'test_log',
 			),
 			$oLogger->getLogConfig('test_log'),
@@ -423,7 +423,7 @@ class LoggerTest extends TestCase
 		$this->assertEquals(
 			array(
 				'mask' => (self::L_DEBUG2 << 1) - 1,
-				'writers' => array('file'),
+				'writers' => array('csv'),
 				'log' => 'test_log',
 			),
 			$oLogger->getLogConfig('test_log'),
@@ -566,7 +566,7 @@ class LoggerTest extends TestCase
 			),
 			'default_log_config' => array(
 				'mask' => 'error',
-				'writers' => array('file'),
+				'writers' => array('csv'),
 			),
 		);
 		$oLogger = new Logger($aOriginalConfig);
@@ -586,7 +586,7 @@ class LoggerTest extends TestCase
 			),
 			'default_log_config' => array(
 				'mask' => 'error',
-				'writers' => array('file'),
+				'writers' => array('csv'),
 			),
 		);
 		$oLogger = new Logger($aOriginalConfig);
@@ -634,12 +634,12 @@ class LoggerTest extends TestCase
 		);
 
 		$oLog->setConfig(array(
-			'writers' => array('display', 'file'),
+			'writers' => array('display', 'csv'),
 		));
 		$this->assertEquals(
 			array(
 				'mask' => (self::L_INFO << 1) - 1,
-				'writers' => array('display', 'file'),
+				'writers' => array('display', 'csv'),
 				'log' => 'test_log',
 			),
 			$oLog->getConfig('test_log'),
@@ -655,7 +655,7 @@ class LoggerTest extends TestCase
 		$this->assertEquals(
 			array(
 				'mask' => (self::L_DEBUG << 1) - 1,
-				'writers' => array('display', 'file'),
+				'writers' => array('display', 'csv'),
 				'log' => 'test_log',
 			),
 			$oLog->getConfig('test_log'),
@@ -679,7 +679,7 @@ class LoggerTest extends TestCase
 		$this->assertEquals(
 			array(
 				'mask' => (self::L_ERROR << 1) - 1,
-				'writers' => array('file'),
+				'writers' => array('csv'),
 				'log' => 'other_log',
 			),
 			$aLogConfig,
@@ -821,36 +821,44 @@ class LoggerTest extends TestCase
 		$oLogger->write('test_log', 'error', 'test message');
 	}
 
-	public function testFileWriter()
+	public function testFileWriters()
 	{
 		$this->sFileWriterDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'test_php_useful_logger';
-		$sExpectedFile = $this->sFileWriterDir . DIRECTORY_SEPARATOR . 'f_test_log_' . date('Ymd') . '.log';
-		$oLogger = new Logger(array(
-			'writers' => array(
-				'file' => array(
-					'enabled' => true,
-					'path' => $this->sFileWriterDir . DIRECTORY_SEPARATOR . 'f_{log}_{date}.log',
+		foreach (
+			[
+				'csv' => '/error.*test message/s',
+				'file' => '/Error.*test message/s',
+			]
+			as $sWriter => $sRegex
+		) {
+			$sExpectedFile = $this->sFileWriterDir . DIRECTORY_SEPARATOR . $sWriter . '_test_log_' . date('Ymd') . '.log';
+			$oLogger = new Logger(array(
+				'writers' => array(
+					$sWriter => array(
+						'enabled' => true,
+						'path' => $this->sFileWriterDir . DIRECTORY_SEPARATOR . $sWriter . '_{log}_{date}.log',
+					),
 				),
-			),
-			'logs' => array(
-				'test_log' => array(
-					'mask' => 'debug',
-					'writers' => array('file'),
+				'logs' => array(
+					'test_log' => array(
+						'mask' => 'debug',
+						'writers' => array($sWriter),
+					),
 				),
-			),
-		));
+			));
 
-		$oLogger->write('test_log', 'error', 'test message');
-		$this->assertFileNotExists($sExpectedFile, 'write() no output until flush');
+			$oLogger->write('test_log', 'error', 'test message');
+			$this->assertFileNotExists($sExpectedFile, 'write() no output until flush');
 
-		$oLogger->flush();
-		$this->assertFileExists($sExpectedFile, 'flush() creates log file');
-		$sContent = file_get_contents($sExpectedFile);
-		$this->assertRegExp(
-			'/error.*test message/s',
-			$sContent,
-			'file content'
-		);
+			$oLogger->flush();
+			$this->assertFileExists($sExpectedFile, 'flush() creates log file');
+			$sContent = file_get_contents($sExpectedFile);
+			$this->assertRegExp(
+				$sRegex,
+				$sContent,
+				'file content'
+			);
+		}
 	}
 
 	public function testRedirectWriter()

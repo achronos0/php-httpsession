@@ -1,18 +1,18 @@
 <?php
 /**
- * \Useful\Logger\Writer\File class
+ * \Useful\Logger\AbstractQueuedWriter class
  *
  * @link https://github.com/morvren-achronos/php-useful
  * @copyright Morvren-Achronos 2019, licensed under Apache 2.0
  * @package Useful
  */
 
-namespace Useful\Logger\Writer;
+namespace Useful\Logger;
 
-use Useful\Logger\AbstractFileWriter;
+use Useful\Logger, Useful\TextPatterns;
 
 /**
- * Write messages to plain-text file
+ * Write messages to file
  *
  * Writer settings:
  *     string `path` - Filepath to write log messages to.
@@ -22,8 +22,8 @@ use Useful\Logger\AbstractFileWriter;
  *             `"{hour}"` - Replaced by the current two-digit hour in 24-hour format.
  *             `"{minute}"` - Replaced by the current two-digit minute.
  *         The directory will be created if it does not exist.
+ *         Default is `set by implementing class, e.g. `"./logs/{log}.log"`
  *         The file will be created if it does not exist, or appended to if it does exist.
- *         Default is `"./logs/{log}.log"`
  *     string `queue` - Controls how internal queueing system operates.
  *         Default for this writer is `log`, which maintains a separate queue for each log name.
  *         If you want to combine all messages into a single file regardless of source, change to queue=single
@@ -32,23 +32,52 @@ use Useful\Logger\AbstractFileWriter;
  *         Default for this writer is TRUE, when a queue is full it is flushed to disk.
  * See {@link \Useful\Logger\AbstractQueuedWriter} for more details on `queue`, `max_messages` and `autoflush` queueing options.
  *
- * @uses \Useful\Logger\AbstractFileWriter
+ * @internal
+ * @uses \Useful\Logger
+ * @uses \Useful\Logger\AbstractQueuedWriter
  */
-class File extends AbstractFileWriter
+abstract class AbstractFileWriter extends AbstractQueuedWriter
 {
 	//////////////////////////////
-	// Implement AbstractFileWriter
+	// Abstract and overridable
 
 	/**
 	 * Return default log filepath specifier
 	 *
 	 * @return string path with placeholders
 	 */
-	protected static function getDefaultPath()
+	abstract protected static function getDefaultPath();
+
+	/**
+	 * Format messages and write to log file
+	 *
+	 * @api
+	 * @param string $sPath log file directory and filename
+	 * @param array $aMessageList list of messages, each is message data as returned by {@link Logger::write_prepMessage}
+	 * @return void
+	 */
+	abstract protected function writeMessagesToFile($sPath, $aMessageList);
+
+
+	//////////////////////////////
+	// Implement AbstractQueuedWriter
+
+	/**
+	 * Return built-in defaults for writer config settings
+	 *
+	 * @api
+	 * @return array config settings map
+	 */
+	public function getDefaultConfig()
 	{
-		return './logs/{log}.log';
+		return array(
+			'path' => $this->getDefaultPath(),
+			'queue' => 'log',
+			'max_messages' => 100,
+			'autoflush' => true,
+		);
 	}
-	
+
 	/**
 	 * Write queued messages to file
 	 *
@@ -56,12 +85,28 @@ class File extends AbstractFileWriter
 	 * @param array $aMessageList list of messages, each is message data as returned by {@link Logger::write_prepMessage}
 	 * @return void
 	 */
-	protected function writeMessagesToFile($sPath, $aMessageList)
+	protected function processMessages($sQueue, $aMessageList)
 	{
-		$sFileContent = '';
-		foreach ($aMessageList as $aMessage) {
-			$sFileContent .= $this->oLogger->formatMessage($aMessage, isset($this->aConfig['format']) ? $this->aConfig['format'] : array());
+		// Finalize log path
+		$sPath = TextPatterns::interpolate(
+			$this->aConfig['path'],
+			array(
+				'log' => $sQueue ? $sQueue : 'combined',
+				'date' => date('Ymd', $aMessageList[0]['time']),
+				'hour' => date('H', $aMessageList[0]['time']),
+				'minute' => date('i', $aMessageList[0]['time']),
+			)
+		);
+
+		// Create log dir if it doesn't exist
+		$sDir = dirname($sPath);
+		if (!file_exists($sDir)) {
+			mkdir($sDir, 0777, true);
 		}
-		file_put_contents($sPath, $sFileContent, FILE_APPEND);
+
+		// Write messages to file
+		$this->writeMessagesToFile($sPath, $aMessageList);
 	}
+
+
 }
