@@ -887,7 +887,7 @@ class Logger
 			}
 			unset($sValue);
 		}
-		if (isset($aMessage['data'])) {
+		if (isset($aMessage['data']) && $aMessage['data'] !== array()) {
 			$aData =
 				is_array($aMessage['data'])
 				? $aMessage['data']
