@@ -132,9 +132,7 @@ class Logger
 	}
 
 	/**
-	 * Get an object for writing messages to a named log
-	 *
-	 * The log is created if it does not already exist.
+	 * Get a PSR-3-compliant object for writing messages to a named log
 	 *
 	 * Log objects are a convenience wrapper around {@link write}.
 	 *
@@ -143,17 +141,35 @@ class Logger
 	 * @return object log receiver object
 	 * @uses \Useful\Logger\Log
 	 */
-	public function getLog($sLog)
+	public function getLog($sLog, $bCreateNew = false)
 	{
 		$sLog = strtolower($sLog);
 		if (!isset($this->aLogs[$sLog])) {
-			$sClassName = $this->aConfig['log_class'];
-			if (!class_exists($sClassName, true)) {
-				throw new Exception("Invalid log class $sClassName");
-			}
-			$this->aLogs[$sLog] = new $sClassName($this, $sLog);
+			$this->aLogs[$sLog] = $this->createNewLog($sLog);
 		}
 		return $this->aLogs[$sLog];
+	}
+
+	/**
+	 * Get an new unique object for writing messages to a named log
+	 *
+	 * Log objects are a convenience wrapper around {@link write}.
+	 *
+	 * This method is similar to {@link getLog} except it will not reuse a previously cached log object.
+	 * This is useful for writing to the same log from multiple places with different message formats (see {@link \Useful\Logger\Log::setMessageFormat}).
+	 *
+	 * @api
+	 * @param string $sLog name of log
+	 * @return object log receiver object
+	 * @uses \Useful\Logger\Log
+	 */
+	public function createNewLog($sLog)
+	{
+		$sClassName = $this->aConfig['log_class'];
+		if (!class_exists($sClassName, true)) {
+			throw new Exception("Invalid log class $sClassName");
+		}
+		return new $sClassName($this, $sLog);
 	}
 
 	/**
@@ -784,17 +800,26 @@ class Logger
 			}
 		}
 
+		$aReplace = is_array($mData) ? $mData : array('data' => $mData);
+		$sMessage = strval($sMessage);
+		if (!empty($aReplace['msg_format'])) {
+			if (strpos($aReplace['msg_format'], '{msg}') === false) {
+				$sMessage = $aReplace['msg_format'] . $sMessage;
+			}
+			else {
+				$sMessage = str_replace('{msg}', $sMessage, $aReplace['msg_format']);
+			}
+		}
+		$sMessage = TextPatterns::interpolate($sMessage, $aReplace);
+
 		return array(
 			'log' => $aLogConfig['log'],
 			'time' => time(),
 			'ftime' => $fTime - $this->getSessionTimer(),
 			'level' => $iLevel,
-			'msg' => TextPatterns::interpolate(
-				strval($sMessage),
-				is_array($mData) ? $mData : array('data' => $mData)
-			),
+			'msg' => $sMessage,
 			'data' => $mData,
-			'timer' => $fStartTimer ? ($this->getTimer() - $fStartTimer) : NULL
+			'timer' => $fStartTimer ? ($fTime - $fStartTimer) : null
 		);
 	}
 

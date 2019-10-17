@@ -18,18 +18,38 @@ use Useful\Logger;
  */
 class LogFactory
 {
-	protected $oLogger;
+	//////////////////////////////
+	// Public
 
 	/**
-	 * Create a named log and return PSR-complaint object for writing to it
+	 * Get a PSR-3-compliant object for writing messages to a named log
+	 *
+	 * Log objects are a convenience wrapper around {@link write}.
 	 *
 	 * @api
 	 * @param string $sLog log name
 	 * @return \Useful\Logger\Log
 	 */
-	public function createLog($sLog)
+	public function getLog($sLog)
 	{
 		return $this->getLogger()->getLog($sLog);
+	}
+
+	/**
+	 * Get a PSR-3-compliant object for writing messages to a named log
+	 *
+	 * Log objects are a convenience wrapper around {@link write}.
+	 *
+	 * This method is similar to {@link getLog} except it will not reuse a previously cached log object.
+	 * This is useful for writing to the same log from multiple places with different message formats (see {@link \Useful\Logger\Log::setMessageFormat}).
+	 *
+	 * @api
+	 * @param string $sLog log name
+	 * @return \Useful\Logger\Log
+	 */
+	public function createNewLog($sLog)
+	{
+		return $this->getLogger()->createNewLog($sLog);
 	}
 
 	/**
@@ -86,4 +106,10 @@ class LogFactory
 	{
 		$this->oLogger = $oLogger;
 	}
+
+
+	//////////////////////////////
+	// Internal
+
+	protected $oLogger;
 }

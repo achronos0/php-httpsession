@@ -9,15 +9,16 @@
 
 namespace Useful\Logger;
 
-use Psr\Log\InvalidArgumentException, Psr\Log\LoggerInterface, Useful\Exception, Useful\Logger;
+use Psr\Log\InvalidArgumentException, Psr\Log\LoggerInterface, Psr\Log\LogLevel, Useful\Exception, Useful\Logger;
 
 /**
  * Send messages to a named log receiver
  *
  * @uses \Useful\Exception
  * @uses \Useful\Logger
- * @uses \Psr\Log\LoggerInterface
  * @uses \Psr\Log\InvalidArgumentException
+ * @uses \Psr\Log\LoggerInterface
+ * @uses \Psr\Log\LogLevel
  */
 class Log implements LoggerInterface
 {
@@ -36,7 +37,7 @@ class Log implements LoggerInterface
 	 */
 	public function emergency($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->log('emergency', $sMessage, $aContext);
+		$this->write(LogLevel::EMERGENCY, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -53,7 +54,7 @@ class Log implements LoggerInterface
 	 */
 	public function alert($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('alert', $sMessage, $aContext);
+		$this->write(LogLevel::ALERT, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -70,7 +71,7 @@ class Log implements LoggerInterface
 	 */
 	public function critical($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('critical', $sMessage, $aContext);
+		$this->write(LogLevel::CRITICAL, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -85,7 +86,7 @@ class Log implements LoggerInterface
 	 */
 	public function error($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('error', $sMessage, $aContext);
+		$this->write(LogLevel::ERROR, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -102,7 +103,7 @@ class Log implements LoggerInterface
 	 */
 	public function warning($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('warning', $sMessage, $aContext);
+		$this->write(LogLevel::WARNING, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -117,7 +118,7 @@ class Log implements LoggerInterface
 	 */
 	public function notice($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('notice', $sMessage, $aContext);
+		$this->write(LogLevel::NOTICE, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -134,7 +135,7 @@ class Log implements LoggerInterface
 	 */
 	public function info($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('info', $sMessage, $aContext);
+		$this->write(LogLevel::INFO, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -153,7 +154,7 @@ class Log implements LoggerInterface
 	 */
 	public function detail($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('detail', $sMessage, $aContext);
+		$this->write('detail', $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -168,7 +169,7 @@ class Log implements LoggerInterface
 	 */
 	public function debug($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('debug', $sMessage, $aContext);
+		$this->write(LogLevel::DEBUG, $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -185,7 +186,7 @@ class Log implements LoggerInterface
 	 */
 	public function debug2($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('debug2', $sMessage, $aContext);
+		$this->write('debug2', $sMessage, $aContext, $fStartTimer);
 	}
 
 	/**
@@ -202,11 +203,14 @@ class Log implements LoggerInterface
 	 */
 	public function debug3($sMessage, array $aContext = array(), $fStartTimer = null)
 	{
-		$this->write('debug3', $sMessage, $aContext);
+		$this->write('debug3', $sMessage, $aContext, $fStartTimer);
 	}
 
     /**
      * Logs message with an arbitrary severity level.
+     *
+     * This is an alias of {@link write} tweaked to be PSR-3 compliant.
+     * If you are using Useful's logger on purpose you can just call {@link write}.
      *
      * @param string $sLevel severity level
      * @param string $sMessage message to write
@@ -244,6 +248,18 @@ class Log implements LoggerInterface
 	*/
 	public function write($mLevel, $sMessage, $mData = null, $fStartTimer = null)
 	{
+		if ($mData === null) {
+			$mData = array();
+		}
+		elseif (!is_array($mData)) {
+			$mData = array('data' => $mData);
+		}
+		if ($this->aAdditionalData) {
+			$mData = array_merge($this->aAdditionalData, $mData);
+		}
+		if ($this->sMessageFormat) {
+			$mData['msg_format'] = $this->sMessageFormat;
+		}
 		$this->oLogger->write($this->sLog, $mLevel, $sMessage, $mData, $fStartTimer);
 	}
 
@@ -324,12 +340,97 @@ class Log implements LoggerInterface
 		return $this->sLog;
 	}
 
+	/**
+	 * Set custom message format
+	 *
+	 * This format is used as a wrapper to add a prefix and/or suffix to the original log message.
+	 *
+	 * If the format includes token "{msg}", that token is where the original message is inserted.
+	 * If the format does not include that token, the format is treated as a prefix; the original message is appended at the end of the format string.
+	 *
+	 * The format may also include tokens to be replaced with elements from context data
+	 *
+	 * @param string $sFormat message format
+	 * @return void
+	 */
+	public function setMessageFormat($sFormat)
+	{
+		$this->sMessageFormat = $sFormat;
+	}
 
+	/**
+	 * Get custom message format
+	 *
+	 * @return string message format
+	 */
+	public function getMessageFormat()
+	{
+		return $this->sMessageFormat;
+	}
+
+	/**
+	 * Get custom message format as reference
+	 *
+	 * This allows for on-the-fly changes to the message format.
+	 *
+	 * @return &string message format as reference
+	 */
+	public function &getMessageFormatAsRef()
+	{
+		return $this->sMessageFormat;
+	}
+
+	/**
+	 * Set additional data to be included in the context data of every message
+	 *
+	 * @param array $aData
+	 * @return void
+	 */
+	public function setAdditionalData($aData)
+	{
+		$this->aAdditionalData = is_array($aData) ? $aData : array();
+	}
+
+	/**
+	 * Get additional data
+	 *
+	 * @return array
+	 */
+	public function getAdditionalData($aData)
+	{
+		return $this->aAdditionalData;
+	}
+
+	/**
+	 * Get additional data as reference
+	 *
+	 * @return &array
+	 */
+	public function &getAdditionalDataAsRef($aData)
+	{
+		return $this->aAdditionalData;
+	}
+
+	/**
+	 * Create a duplicate of this object
+	 *
+	 * This is equivalent to calling `$oNewLog = clone $oOldLog`.
+	 *
+	 * @return \Useful\Logger\Log
+	 */
+	public function clone()
+	{
+		return clone $this;
+	}
+
+	
 	//////////////////////////////
 	// Internal
 
 	protected $oLogger;
 	protected $sLog;
+	protected $sMessageFormat = '';
+	protected $aAdditionalData = array();
 
 	/**
 	 * Create new named log receiver

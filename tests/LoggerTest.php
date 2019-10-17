@@ -605,7 +605,7 @@ class LoggerTest extends TestCase
 			'LogFactory->getLogger()'
 		);
 
-		$oLog = $oLogFactory->createLog('test_log');
+		$oLog = $oLogFactory->getLog('test_log');
 		$this->assertLogInstance($oLog, $oLogger);
 	}
 
@@ -721,13 +721,60 @@ class LoggerTest extends TestCase
  			'write_prepWriters()'
  		);
 
-		$aMessage = $oLogger->write_prepMessage($aLogConfig, self::L_ERROR, 'test', null, null);
+		$aMessage = $oLogger->write_prepMessage($aLogConfig, self::L_ERROR, 'test message', null, null);
 		$this->assertLoggerMessage($aMessage, 'write_prepWriters()');
+		$this->assertStringContainsString('test message', $aMessage['msg'], 'write_prepWriters()');
+
+		$aMessage = $oLogger->write_prepMessage($aLogConfig, self::L_ERROR, 'test {foo}', array('foo' => 'message'), null);
+		$this->assertLoggerMessage($aMessage, 'write_prepWriters()');
+		$this->assertStringContainsString('test message', $aMessage['msg'], 'write_prepWriters() with interpolation');
+
+		$aMessage = $oLogger->write_prepMessage($aLogConfig, self::L_ERROR, 'test {foo}', array('foo' => 'message', 'msg_format' => 'prefix:'), null);
+		$this->assertStringContainsString('prefix:test message', $aMessage['msg'], 'write_prepWriters() with msg_format');
+		$aMessage = $oLogger->write_prepMessage($aLogConfig, self::L_ERROR, 'test {foo}', array('foo' => 'message', 'msg_format' => 'prefix:{msg}:suffix'), null);
+		$this->assertStringContainsString('prefix:test message:suffix', $aMessage['msg'], 'write_prepWriters() with msg_format');
 
 		$oLogger->write('test_log', 'error', 'test error message');		
 		$aProcessed = $oMockWriter->getProcessed();
 		$this->assertCount(1, $aProcessed, 'write()');
 		$this->assertMockWriterResult('test_log', 1, $aProcessed[0], 'write()');
+	}
+
+	public function testTrait()
+	{
+		$oMockWriter = new MockWriter();
+		$aOriginalConfig = array(
+			'logs' => array(
+				'test_log' => array(
+					'mask' => 'info',
+					'writers' => array('mock'),
+				),
+			),
+			'writers' => array(
+				'mock' => array(
+					'enabled' => true,
+					'queue' => false,
+					'obj' => $oMockWriter,
+				),
+			),
+		);
+		$oLogger = new Logger($aOriginalConfig);
+		$oLog = $oLogger->getLog('test_log');
+
+		require_once('data/logtrait.php');		
+		$oTraitTest = new TestLogTrait($oLog);
+
+		$oTraitLog = $oTraitTest->getLog();
+		$this->assertEquals(
+			$oLog,
+			$oTraitLog,
+			'TestLogTrait->getLog()'
+		);
+
+		$oTraitTest->doThing();
+		$aProcessed = $oMockWriter->getProcessed();
+		$this->assertCount(1, $aProcessed, 'TestLogTrait->write()');
+		$this->assertMockWriterResult('test_log', 1, $aProcessed[0], 'TestLogTrait->write()');
 	}
 
 	public function testCallbackWriter()
@@ -1002,7 +1049,7 @@ class LoggerTest extends TestCase
 		$this->assertIsFloat($aMessage['ftime'], $sAssertMessage);
 		$this->assertIsInt($aMessage['level'], $sAssertMessage);
 		$this->assertIsString($aMessage['msg'], $sAssertMessage);
-		$this->assertNull($aMessage['data'], $sAssertMessage);
-		$this->assertNull($aMessage['timer'], $sAssertMessage);
+		// $this->assertNull($aMessage['data'], $sAssertMessage);
+		// $this->assertNull($aMessage['timer'], $sAssertMessage);
 	}
 }
