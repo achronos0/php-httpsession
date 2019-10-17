@@ -36,7 +36,7 @@ abstract class BaseConversionTest extends TestCase
 			'p',
 			function ($aTest, $sClass)
 			{
-				$aResult = $sClass::parse($aTest['content']);
+				$aResult = $sClass::parse($aTest['content'], isset($aTest['options']) ? $aTest['options'] : array());
 				return array( 'data', $aResult );
 			}
 		);
@@ -49,7 +49,7 @@ abstract class BaseConversionTest extends TestCase
 			function ($aTest, $sClass)
 			{
 				file_put_contents($this->sTempFile, $aTest['content']);
-				$aResult = $sClass::read($this->sTempFile);
+				$aResult = $sClass::read($this->sTempFile, isset($aTest['options']) ? $aTest['options'] : array());
 				return array( 'data', $aResult );
 			}
 		);
@@ -61,7 +61,7 @@ abstract class BaseConversionTest extends TestCase
 			'g',
 			function ($aTest, $sClass)
 			{
-				$sResult = $sClass::generate($aTest['data']);
+				$sResult = $sClass::generate($aTest['data'], isset($aTest['options']) ? $aTest['options'] : array());
 				return array( 'content', $sResult );
 			}
 		);
@@ -73,7 +73,7 @@ abstract class BaseConversionTest extends TestCase
 			'w',
 			function ($aTest, $sClass)
 			{
-				$sClass::write($this->sTempFile, $aTest['data']);
+				$sClass::write($this->sTempFile, $aTest['data'], isset($aTest['options']) ? $aTest['options'] : array());
 				$sResult = file_get_contents($this->sTempFile);
 				return array( 'content', $sResult );
 			}

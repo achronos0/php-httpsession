@@ -336,6 +336,17 @@ Set this option to `true` to force use of gzip for other filenames.
 
 Default is `false`.
 
+#### `utf8_bom`
+Whether to begin content with a UTF-8 byte order mark (BOM), "\xEF\xBB\xBF":
+*	`true`: include UTF-8 BOM at start of file
+*	`false`: do not include BOM
+
+This is primarily useful when writing CSV files for import into very old versions of Microsoft Excel, which do not detect UTF-8 by default.
+
+Default is `false`.
+
+Note that readers always detect (and ignore) a UTF-8 BOM if present.
+
 ## Format options ##
 
 These options control detailed aspects of the delimited text format.

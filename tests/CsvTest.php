@@ -29,6 +29,29 @@ class CsvTest extends BaseConversionTest
 			),
 		),
 		array(
+			'name' => 'basic_with_bom',
+			'content' => '
+				' . "\xEF\xBB\xBF" . 'a,b,c
+				1,2,3
+				4,5,6
+			',
+			'data' => array(
+				array(
+					'a' => '1',
+					'b' => '2',
+					'c' => '3',
+				),
+				array(
+					'a' => '4',
+					'b' => '5',
+					'c' => '6',
+				),
+			),
+			'options' => array(
+				'utf8_bom' => true,
+			),
+		),
+		array(
 			'name' => 'quotes',
 			'content' => '
 				a,b,c

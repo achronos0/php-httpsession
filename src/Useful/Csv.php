@@ -132,10 +132,6 @@ class Csv
 		);
 		header('Pragma: no-cache');
 
-		// Output UTF-8 BOM (byte order mark)
-		// [2017-01 kp] needed for old versions of MS Excel to recognize UTF-8 encoding
-		echo "\xEF\xBB\xBF";
-
 		// Output CSV content
 		try {
 			self::write('php://output', $aData, $aOptions);
@@ -412,10 +408,11 @@ class Csv
 								$this->mHandle,
 								$this->aOptions['chunk_size']
 							);
-							break;
 						}
-						$this->sReadBuffer .= $this->mHandle;
-						$this->mHandle = '';
+						else {
+							$this->sReadBuffer .= $this->mHandle;
+							$this->mHandle = '';
+						}
 						break;
 
 					// file
@@ -1344,6 +1341,8 @@ class Csv
 	//////////////////////////////
 	// Internal
 
+	const UTF8_BOM = "\xEF\xBB\xBF";
+	const GZIP_MAGIC = "\x1F\x8B";
 	protected $aOptions;
 	protected $bWriter;
 	protected $iFileType; // 0 string, 1 file, 2 gzip
@@ -1380,6 +1379,7 @@ class Csv
 				// Writer
 				'append' => false,
 				'gzip' => false,
+				'utf8_bom' => false,
 				// Format
 				'newline' => null,
 				'delimiter' => null,
@@ -1443,35 +1443,51 @@ class Csv
 
 			// Confirm file exists
 			$this->sPath = realpath($sFilePath);
-			if (!file_exists($this->sPath))
+			if (!file_exists($this->sPath)) {
 				throw new Exception('Path does not exist');
-			if (!is_file($this->sPath))
+			}
+			if (!is_file($this->sPath)) {
 				throw new Exception('Path is not a file');
-			if (!is_readable($this->sPath))
+			}
+			if (!is_readable($this->sPath)) {
 				throw new Exception('Path is not readable');
+			}
 
 			// Open file for reading
 			$this->mHandle = fopen($this->sPath, 'rb');
-			if (!$this->mHandle)
+			if (!$this->mHandle) {
 				throw new Exception('Unable to open file');
+			}
 
 			// Detect gzip archive
-			if (fread($this->mHandle, 2) == "\x1F\x8B") {
+			if (fread($this->mHandle, strlen(self::GZIP_MAGIC)) == self::GZIP_MAGIC) {
 				// Check for gzip extension
-				if (!function_exists('gzopen'))
-					throw new Exception('Cannot open gzip file, no fzip extension');
+				if (!function_exists('gzopen')) {
+					throw new Exception('Cannot open gzip file, no gzip extension');
+				}
 
 				// Reopen using gzip extension
 				fclose($this->mHandle);
 				$this->mHandle = gzopen($this->sPath, 'rb');
-				if (!$this->mHandle)
+				if (!$this->mHandle) {
 					throw new Exception('Unable to open gzip archive');
+				}
 
 				// Set gzip type
 				$this->iFileType = 2;
+
+				// Skip UTF-8 BOM if present
+				if (gzread($this->mHandle, strlen(self::UTF8_BOM)) != self::UTF8_BOM) {
+					gzrewind($this->mHandle);
+				}
 			}
 			else {
 				rewind($this->mHandle);
+
+				// Skip UTF-8 BOM if present
+				if (fread($this->mHandle, strlen(self::UTF8_BOM)) != self::UTF8_BOM) {
+					rewind($this->mHandle);
+				}
 			}
 		}
 
@@ -1479,6 +1495,11 @@ class Csv
 		else {
 			$this->iFileType = 0;
 			$this->mHandle = $sFilePath;
+
+			// Skip UTF-8 BOM if present
+			if (substr($this->mHandle, 0, strlen(self::UTF8_BOM)) == self::UTF8_BOM) {
+				$this->mHandle = substr($this->mHandle, 3);
+			}
 		}
 
 		// Set parsing flags
@@ -1716,10 +1737,12 @@ class Csv
 			$sMode = 'wb';
 
 			// Check for append to existing file
+			$bAppending = false;
 			if ($this->aOptions['append'] && $bExists) {
 				// Open for appending and do not write header
 				$this->iRecordIndex = 0;
 				$sMode = 'ab';
+				$bAppending = true;
 
 				// Check whether file is actually gzip
 				if ($this->iFileType == 1) {
@@ -1744,12 +1767,22 @@ class Csv
 				if (!$this->mHandle)
 					throw new Exception('Unable to open gzip archive');
 			}
+
+			// Output UTF-8 BOM (byte order mark)
+			if ($this->aOptions['utf8_bom'] && !$bAppending) {
+				fwrite($this->mHandle, self::UTF8_BOM);
+			}
 		}
 
 		// Set up string buffer
 		else {
 			$this->iFileType = 0;
 			$this->mHandle = '';
+
+			// Output UTF-8 BOM (byte order mark)
+			if ($this->aOptions['utf8_bom']) {
+				$this->mHandle .= self::UTF8_BOM;
+			}
 		}
 	}
 }
