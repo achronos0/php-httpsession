@@ -62,6 +62,13 @@ class TextPatterns
 					}
 					else {
 						$sMessage = '';
+						$iMaxKeyLength = 0;
+						foreach (array_keys($mUseVar) as $sKey) {
+							$iLen = strlen($sKey);
+							if ($iLen > $iMaxKeyLength) {
+								$iMaxKeyLength = $iLen;
+							}
+						}
 					}
 					foreach ($mUseVar as $sKey => $mValue) {
 						$bDump = (
@@ -98,7 +105,16 @@ class TextPatterns
 							;
 						}
 						else {
-							$sMessage .= $sKey . ': ' . ($bDump ? self::dump($mValue, 0) : $mValue) . PHP_EOL;
+							$sKeyContent = str_pad($sKey . ':', $iMaxKeyLength + 1);
+							if ($bDump) {
+								$iPrettyDepth++;
+								$sDumpContent = PHP_EOL . self::dump($mValue, false, 'pretty', $iMaxPrettyDepth);
+								$iPrettyDepth--;
+							}
+							else {
+								$sDumpContent = $mValue;
+							}
+							$sMessage .= str_repeat('    ', $iPrettyDepth) . $sKeyContent . ' ' . $sDumpContent . PHP_EOL;
 						}
 					}
 					if ($bHtml) {
